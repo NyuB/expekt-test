@@ -1,6 +1,5 @@
-package nyub.expekt.promote
+package nyub.expekt
 
-import nyub.nyub.expekt.promote.ExpectTests
 import org.junit.jupiter.api.Test
 
 class DemoTest {

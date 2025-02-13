@@ -1,6 +1,5 @@
-package nyub.expekt.promote
+package nyub.expekt
 
-import nyub.nyub.expekt.promote.ExpectTests
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 
@@ -21,6 +20,25 @@ internal class ExpectTestsTest {
                along your test
             and then ... expect
             
+        """
+                    .trimIndent()
+            )
+        }
+
+    @Test
+    fun `multiple expect call in a single test`() =
+        e.expectTest {
+            print("One")
+            expect(
+                """
+            One
+        """
+                    .trimIndent()
+            )
+            print("Two")
+            expect(
+                """
+            Two
         """
                     .trimIndent()
             )

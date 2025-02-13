@@ -1,4 +1,4 @@
-package nyub.nyub.expekt.promote
+package nyub.expekt
 
 import java.nio.file.Files
 import java.nio.file.Path
