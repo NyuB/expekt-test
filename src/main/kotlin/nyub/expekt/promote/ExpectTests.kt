@@ -15,12 +15,17 @@ class ExpectTests(
     private val promote: Boolean = false,
 ) {
     /**
-     * This scope acts as a marker to help find/replace mechanism and should contain your entire test e.g.
+     * All prints output within the provided scopes are stored and can be asserted with [ExpectTest.expect] A call to
+     * [ExpectTest.expect] clears the output. When leaving expectTest, an AssertionError is raised if there is any
+     * remaining output.
      *
      * ```kotlin
      * @Test
      * fun myTest() = expectTest() {
-     *     // ...
+     *     print("A line")
+     *     expect("""
+     *     A line
+     *     """.trimIndent())
      * }
      * ```
      */
