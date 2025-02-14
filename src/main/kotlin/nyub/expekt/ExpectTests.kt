@@ -102,8 +102,11 @@ class ExpectTests(
             resolveClassesFrom.resolve(callSite.className.replace(".", "/")).parent.resolve(callSite.fileName!!)
         val callSiteLines = Files.readString(callSiteFile).split("\n")
         val expectedLines = if (expected.isEmpty()) emptyList() else expected.split("\n").dropLastWhile { it.isEmpty() }
-        var stringStartIndex = callSite.lineNumber - 1
-        while (!callSiteLines[stringStartIndex].contains("\"\"\"")) stringStartIndex++
+        val stringStartIndex =
+            findTripleQuotedStringStart(callSiteLines, callSite.lineNumber - 1)
+                ?: throw RuntimeException(
+                    "Could not find expected string at $callSiteFile:${callSite.lineNumber}, maybe it is not within a triple-quoted block?"
+                )
 
         val before = callSiteLines.subList(0, stringStartIndex + 1)
         val after = callSiteLines.subList(stringStartIndex + 1 + expectedLines.size, callSiteLines.size)
@@ -111,6 +114,12 @@ class ExpectTests(
 
         val actualLines = actual.split("\n")
         Files.writeString(callSiteFile, ExpectedLinesReplacement(before, between, after).replaceWith(actualLines))
+    }
+
+    private fun findTripleQuotedStringStart(lines: List<String>, startIndex: Int): Int? {
+        var index = startIndex
+        while (index < lines.size && !lines[index].contains("\"\"\"")) index++
+        return if (index == lines.size) null else index
     }
 
     private data class ExpectedLinesReplacement(

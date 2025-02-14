@@ -64,4 +64,15 @@ internal class KotlinUsageTest {
     fun `raises if not all output is consumed by assertions`() {
         assertThatThrownBy { e.expectTest { println("Not consumed") } }.isInstanceOf(AssertionError::class.java)
     }
+
+    @Test
+    fun `when the expected string cannot be found, raise an error hinting toward missing triple-quotes`() =
+        ExpectTests(promote = true).expectTest {
+            print("Not within triple quotes")
+            assertThatThrownBy { expect("Not within triple quotes") }
+                .isInstanceOf(RuntimeException::class.java)
+                .hasMessageContaining("Could not find expected string")
+                .hasMessageContaining("${KotlinUsageTest::class.simpleName}.kt")
+                .hasMessageContaining("triple-quoted block")
+        }
 }
