@@ -35,17 +35,37 @@ class ExpectTests(
         expectTest.end()
     }
 
+    /** Test scope. Maintains an output buffer with the printed content and provides assertions on its content */
     class ExpectTest internal constructor(private val creator: ExpectTests) {
         private val actual = StringBuilder()
+        internal val output: String
+            get() = actual.toString()
 
+        /** Add [s] to the output buffer */
         fun print(s: String) {
             actual.append(s)
         }
 
+        /**
+         * Equivalent to
+         *
+         * ```kotlin
+         * print(s)
+         * print("\n")
+         * ```
+         *
+         * @see print
+         */
         fun println(s: String) {
             actual.append(s).append("\n")
         }
 
+        /**
+         * Asserts that the current output matches the [expected] content, or update the [expected] content in place if
+         * [creator] is in promote mode. Clears the output buffer.
+         *
+         * @throws AssertionError if the current output does not match [expected]
+         */
         fun expect(expected: String) =
             try {
                 val lines = actual.toString().split("\n").map { it.trimEnd() }.filter { it.isNotEmpty() }
@@ -54,8 +74,17 @@ class ExpectTests(
                 actual.clear()
             }
 
+        /**
+         * @throws AssertionError if there is still any unhandled output
+         * @see expect
+         */
         fun end() {
             if (actual.isNotEmpty()) throw AssertionError("Unhandled output remaining after expect test: '$actual'")
+        }
+
+        /** Clears the current output buffer */
+        fun clear() {
+            actual.clear()
         }
     }
 
@@ -63,7 +92,7 @@ class ExpectTests(
         if (promote) {
             promote(expected, actual)
         } else {
-            assertThat(actual).isEqualTo(expected)
+            assertThat(actual).isEqualTo(expected.trim { it.isWhitespace() || it == '\n' })
         }
     }
 

@@ -3,7 +3,7 @@ package nyub.expekt
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 
-internal class ExpectTestsTest {
+internal class KotlinUsageTest {
     private val e = ExpectTests(promote = System.getProperty("nyub.expekt.promote", "false") == "true")
 
     @Test

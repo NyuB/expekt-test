@@ -4,9 +4,12 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.function.Consumer;
 import kotlin.Unit;
+import nyub.expekt.junit.ExpectTestExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-public class JavaCompatTest {
+@ExtendWith(ExpectTestExtension.class)
+public class JavaUsageTest {
   private final ExpectTests e =
       new ExpectTests(
           Paths.get("src/test/kotlin"),
@@ -34,6 +37,18 @@ public class JavaCompatTest {
     """);
           return Unit.INSTANCE;
         });
+  }
+
+  @Test
+  void junitExtension(ExpectTests.ExpectTest t) {
+    t.print("Ok");
+    t.expect("Ok");
+  }
+
+  @Test
+  @ExpectTestExtension.ExpectUnhandledOutput
+  void junitExtensionEnsureOutputIsConsumed(ExpectTests.ExpectTest t) {
+    t.print("Oops, not consumed");
   }
 
   void printValues(int[] values, Consumer<String> print) {
