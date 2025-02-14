@@ -112,6 +112,13 @@
               </indent>
             </format>
           </formats>
+          <java>
+            <googleJavaFormat>
+              <style>GOOGLE</style>
+              <reflowLongStrings>false</reflowLongStrings>
+              <formatJavadoc>false</formatJavadoc>
+            </googleJavaFormat>
+          </java>
           <kotlin>
             <includes>
               <include>src/**/*.kt</include>

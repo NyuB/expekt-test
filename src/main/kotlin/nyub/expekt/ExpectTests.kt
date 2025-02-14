@@ -48,7 +48,7 @@ class ExpectTests(
 
         fun expect(expected: String) =
             try {
-                creator.expect(expected, actual.toString())
+                creator.expect(expected, actual.toString().trimEnd { it.isWhitespace() || it == '\n' })
             } finally {
                 actual.clear()
             }

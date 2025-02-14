@@ -19,7 +19,6 @@ internal class ExpectTestsTest {
             Just print as usual
                along your test
             and then ... expect
-            
         """
                     .trimIndent()
             )
