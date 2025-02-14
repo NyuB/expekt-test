@@ -48,7 +48,8 @@ class ExpectTests(
 
         fun expect(expected: String) =
             try {
-                creator.expect(expected, actual.toString().trimEnd { it.isWhitespace() || it == '\n' })
+                val lines = actual.toString().split("\n").map { it.trimEnd() }.filter { it.isNotEmpty() }
+                creator.expect(expected, lines.joinToString(separator = "\n"))
             } finally {
                 actual.clear()
             }
