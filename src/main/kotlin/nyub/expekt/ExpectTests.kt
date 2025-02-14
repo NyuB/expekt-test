@@ -70,8 +70,8 @@ class ExpectTests(
         val callSite = callSite()
         val callSiteFile =
             resolveClassesFrom.resolve(callSite.className.replace(".", "/")).parent.resolve(callSite.fileName!!)
-        val callSiteLines = Files.readAllLines(callSiteFile)
-        val expectedLines = if (expected.isEmpty()) emptyList() else expected.split("\n")
+        val callSiteLines = Files.readString(callSiteFile).split("\n")
+        val expectedLines = if (expected.isEmpty()) emptyList() else expected.split("\n").dropLastWhile { it.isEmpty() }
         var stringStartIndex = callSite.lineNumber - 1
         while (!callSiteLines[stringStartIndex].contains("\"\"\"")) stringStartIndex++
 
