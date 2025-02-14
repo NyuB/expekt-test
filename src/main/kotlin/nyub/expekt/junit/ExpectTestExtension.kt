@@ -27,7 +27,6 @@ class ExpectTestExtension : ParameterResolver, BeforeEachCallback, AfterEachCall
                 }
 
                 expectTests = ExpectTests(root, promote)
-                expectTest = ExpectTests.ExpectTest(expectTests)
             }
         }
     }
@@ -41,7 +40,13 @@ class ExpectTestExtension : ParameterResolver, BeforeEachCallback, AfterEachCall
     }
 
     override fun beforeEach(ctx: ExtensionContext) {
-        expectTest.clear()
+        var overrideBaseConfig = expectTests
+        ctx.testMethod.ifPresent {
+            it.annotations.forEach { annotation ->
+                if (annotation is Promote) overrideBaseConfig = overrideBaseConfig.copy(promote = annotation.value)
+            }
+        }
+        expectTest = overrideBaseConfig.expectTest()
     }
 
     override fun afterEach(ctx: ExtensionContext) {
@@ -63,7 +68,7 @@ class ExpectTestExtension : ParameterResolver, BeforeEachCallback, AfterEachCall
     @Target(AnnotationTarget.FUNCTION) annotation class ExpectUnhandledOutput
 
     /** Override system property for promotion behavior */
-    @Target(AnnotationTarget.CLASS) annotation class Promote(val value: Boolean)
+    @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION) annotation class Promote(val value: Boolean)
 
     /** Override system property for sources root path */
     @Target(AnnotationTarget.CLASS) annotation class RootPath(val value: String)

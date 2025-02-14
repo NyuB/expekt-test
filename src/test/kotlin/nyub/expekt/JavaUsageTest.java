@@ -42,13 +42,26 @@ public class JavaUsageTest {
   @Test
   void junitExtension(ExpectTests.ExpectTest t) {
     t.print("Ok");
-    t.expect("Ok");
+    t.expect(
+        """
+            Ok
+            """);
   }
 
   @Test
   @ExpectTestExtension.ExpectUnhandledOutput
   void junitExtensionEnsureOutputIsConsumed(ExpectTests.ExpectTest t) {
     t.print("Oops, not consumed");
+  }
+
+  @Test
+  @ExpectTestExtension.Promote(true)
+  void overridePromotePerMethod(ExpectTests.ExpectTest t) {
+    t.print("This will always be promoted");
+    t.expect(
+        """
+           This will always be promoted
+           """);
   }
 
   void printValues(int[] values, Consumer<String> print) {

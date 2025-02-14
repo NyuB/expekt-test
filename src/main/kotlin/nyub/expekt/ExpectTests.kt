@@ -10,7 +10,7 @@ import org.assertj.core.api.Assertions.assertThat
  * @property promote when `true` updates all source files with the current output, otherwise perform usual equality
  *   assertions
  */
-class ExpectTests(
+data class ExpectTests(
     private val resolveClassesFrom: Path = Paths.get("src/test/kotlin"),
     private val promote: Boolean = false,
 ) {
@@ -34,6 +34,8 @@ class ExpectTests(
         expectTest.test()
         expectTest.end()
     }
+
+    fun expectTest(): ExpectTest = ExpectTest(this)
 
     /** Test scope. Maintains an output buffer with the printed content and provides assertions on its content */
     class ExpectTest internal constructor(private val creator: ExpectTests) {
@@ -122,7 +124,7 @@ class ExpectTests(
         return if (index == lines.size) null else index
     }
 
-    private data class ExpectedLinesReplacement(
+    private class ExpectedLinesReplacement(
         val before: List<String>,
         val between: List<String>,
         val after: List<String>,
