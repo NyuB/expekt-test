@@ -1,28 +1,21 @@
 package nyub.expekt;
 
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.function.Consumer;
-import kotlin.Unit;
 import nyub.expekt.junit.ExpectTestExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(ExpectTestExtension.class)
-public class JavaUsageTest {
-  private final ExpectTests e =
-      new ExpectTests(
-          Paths.get("src/test/kotlin"),
-          System.getProperty("nyub.expekt.promote", "false").equals("true"));
+@ExpectTestExtension.RootPath("src/test/kotlin")
+class JavaUsageTest {
 
   @Test
-  void happyPath() {
-    e.expectTest(
-        t -> {
-          final var sine = sineWave(0, 100, 5, 0.2);
-          printValues(sine, t::print);
-          t.expect(
-              """
+  void happyPath(ExpectTests.ExpectTest t) {
+    final var sine = sineWave(0, 100, 5, 0.2);
+    printValues(sine, t::print);
+    t.expect(
+        """
     ^      +++++++                         ++++++                         ++++++                         ++
     |     +       +                      ++      +                       +      ++                      +
     |    +         +                    +         ++                   ++         +                    +
@@ -35,17 +28,6 @@ public class JavaUsageTest {
     |                      ++++++                         +++++++                         ++++++
     o --------------------------------------------------------------------------------------------------->
     """);
-          return Unit.INSTANCE;
-        });
-  }
-
-  @Test
-  void junitExtension(ExpectTests.ExpectTest t) {
-    t.print("Ok");
-    t.expect(
-        """
-            Ok
-            """);
   }
 
   @Test
@@ -64,7 +46,7 @@ public class JavaUsageTest {
            """);
   }
 
-  void printValues(int[] values, Consumer<String> print) {
+  private void printValues(int[] values, Consumer<String> print) {
     final var maxValue = Arrays.stream(values).max().orElse(0);
     for (int i = maxValue; i >= 0; i--) {
       if (i == maxValue) print.accept("^ ");
@@ -82,7 +64,7 @@ public class JavaUsageTest {
     }
   }
 
-  int[] sineWave(int from, int to, int factor, double step) {
+  private int[] sineWave(int from, int to, int factor, double step) {
     final var result = new int[to - from + 1];
     for (int x = from; x <= to; x++) {
       double y = (Math.sin(x * step) + 1) * factor;
