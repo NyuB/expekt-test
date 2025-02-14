@@ -46,7 +46,7 @@ data class ExpectTests(
             get() = actual.toString()
 
         /** Add [s] to the output buffer */
-        fun print(s: String) {
+        fun print(s: Any) {
             actual.append(s)
         }
 
@@ -60,7 +60,7 @@ data class ExpectTests(
          *
          * @see print
          */
-        fun println(s: String) {
+        fun println(s: Any) {
             actual.append(s).append("\n")
         }
 
