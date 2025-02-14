@@ -64,7 +64,7 @@ internal class KotlinUsageTest {
 
     @Test
     fun `raises if not all output is consumed by assertions`() {
-        assertThatThrownBy { e.expectTest { println("Not consumed") } }.isInstanceOf(AssertionError::class.java)
+        assertThatThrownBy { expectTest { println("Not consumed") } }.isInstanceOf(AssertionError::class.java)
     }
 
     @Test
