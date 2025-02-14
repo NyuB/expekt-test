@@ -4,44 +4,46 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 
 internal class KotlinUsageTest {
+    /** Shared configuration for expect tests */
     private val e = ExpectTests(promote = System.getProperty("nyub.expekt.promote", "false") == "true")
 
-    @Test
-    fun `happy path`() =
-        e.expectTest {
-            println("Just print as usual")
-            println("   along your test")
-            print("and then ... ")
-            println("expect")
+    /** Alias to avoid typing e.expectTest for the generic case */
+    private fun expectTest(test: ExpectTests.ExpectTest.() -> Unit) = e.expectTest(test)
 
-            expect(
-                """
+    @Test
+    fun `happy path`() = expectTest {
+        println("Just print as usual")
+        println("   along your test")
+        print("and then ... ")
+        println("expect")
+
+        expect(
+            """
             Just print as usual
                along your test
             and then ... expect
         """
-                    .trimIndent()
-            )
-        }
+                .trimIndent()
+        )
+    }
 
     @Test
-    fun `multiple expect call in a single test`() =
-        e.expectTest {
-            print("One")
-            expect(
-                """
+    fun `multiple expect call in a single test`() = expectTest {
+        print("One")
+        expect(
+            """
             One
         """
-                    .trimIndent()
-            )
-            print("Two")
-            expect(
-                """
+                .trimIndent()
+        )
+        print("Two")
+        expect(
+            """
             Two
         """
-                    .trimIndent()
-            )
-        }
+                .trimIndent()
+        )
+    }
 
     @Test
     fun `raises when output is not equal to expected string`() =
