@@ -11,7 +11,7 @@ Expekt is a lightweight acceptance test tool:
 This means that efforts to represent your objects as readable strings, (such as ascii art, tables, graphs ...) can be directly exploited as readable assertions.
 It also makes updating these assertions effortless, should their representation change.
 
-![histogram demo](doc/histo.gif)
+![waveforms demo](doc/waveforms.gif)
 
 ## Setup
 
