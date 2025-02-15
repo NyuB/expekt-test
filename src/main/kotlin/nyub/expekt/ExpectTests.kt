@@ -112,18 +112,21 @@ data class ExpectTests(
             resolveClassesFrom.resolve(callSite.className.replace(".", "/")).parent.resolve(callSite.fileName!!)
         val callSiteLines = Files.readString(callSiteFile).split("\n")
         val expectedLines = if (expected.isEmpty()) emptyList() else expected.split("\n").dropLastWhile { it.isEmpty() }
+
+        val lineNumber = offsets.getAdjustedLine(callSiteFile, callSite.lineNumber)
         val stringStartIndex =
-            findTripleQuotedStringStart(callSiteLines, callSite.lineNumber - 1)
+            findTripleQuotedStringStart(callSiteLines, lineNumber - 1)
                 ?: throw RuntimeException(
-                    "Could not find expected string at $callSiteFile:${callSite.lineNumber}, maybe it is not within a triple-quoted block?"
+                    "Could not find expected string at $callSiteFile:$lineNumber, maybe it is not within a triple-quoted block?"
                 )
 
         val before = callSiteLines.subList(0, stringStartIndex + 1)
-        val after = callSiteLines.subList(stringStartIndex + 1 + expectedLines.size, callSiteLines.size)
         val between = callSiteLines.subList(stringStartIndex + 1, stringStartIndex + 1 + expectedLines.size)
+        val after = callSiteLines.subList(stringStartIndex + 1 + expectedLines.size, callSiteLines.size)
 
         val actualLines = actual.split("\n")
         Files.writeString(callSiteFile, ExpectedLinesReplacement(before, between, after).replaceWith(actualLines))
+        offsets.record(callSiteFile, callSite.lineNumber, actualLines.size - between.size)
     }
 
     private fun findTripleQuotedStringStart(lines: List<String>, startIndex: Int): Int? {
@@ -132,11 +135,7 @@ data class ExpectTests(
         return if (index == lines.size) null else index
     }
 
-    private class ExpectedLinesReplacement(
-        val before: List<String>,
-        val between: List<String>,
-        val after: List<String>,
-    ) {
+    private class ExpectedLinesReplacement(val before: List<String>, between: List<String>, val after: List<String>) {
         fun replaceWith(actualLines: List<String>) =
             (before + actualLines.map { commonPrefix + it } + after).joinToString(separator = "\n")
 
@@ -168,4 +167,48 @@ data class ExpectTests(
             }
         return currentStack[thisMethodIndex + 1]
     }
+}
+
+/**
+ * Globally records line additions or removal to keep line counts up-to-date if there are multiple promotions to the
+ * same file
+ */
+private val offsets = FileOffsets()
+
+class FileOffsets {
+    private val offsets = mutableMapOf<String, LineOffsets>()
+
+    /** Records a number of lines added (if [offset] is positive) or removed (if [offset] is negative) from a [file] */
+    fun record(file: Path, originalLine: Int, offset: Int) {
+        val current = offsets.getOrPut(file.toString()) { LineOffsets() }
+        current.insert(originalLine, offset)
+    }
+
+    /**
+     * @return the line corresponding to [originalLine] within a [file], which may differ if the file was written to
+     *   during a promotion
+     */
+    fun getAdjustedLine(file: Path, originalLine: Int): Int {
+        return offsets[file.toString()]?.getAdjustedLine(originalLine) ?: originalLine
+    }
+}
+
+class LineOffsets {
+    private val offsets = mutableListOf<Offset>()
+
+    /** Records an offset from [originalLine] */
+    fun insert(originalLine: Int, offset: Int) {
+        var index = 0
+        while (index < offsets.size && offsets[index].originalLine < originalLine) index++
+        offsets.add(index, Offset(originalLine, offset))
+    }
+
+    /** @return the line corresponding to [originalLine] after taking these [offsets] into account */
+    fun getAdjustedLine(originalLine: Int): Int {
+        var res = originalLine
+        offsets.forEach { if (it.originalLine < originalLine) res += it.offset }
+        return res
+    }
+
+    private class Offset(val originalLine: Int, val offset: Int)
 }
