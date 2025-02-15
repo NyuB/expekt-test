@@ -10,8 +10,7 @@
     <junit.version>5.10.0</junit.version>
     <kotlin.code.style>official</kotlin.code.style>
     <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <spotless.sortOrder>scope,groupId,artifactId,classifier,version</spotless.sortOrder>
     <spotless.version>2.44.2</spotless.version>
