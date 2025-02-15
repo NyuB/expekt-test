@@ -64,6 +64,12 @@ data class ExpectTests(
             actual.append(s).append("\n")
         }
 
+        fun newLine() = println("")
+
+        fun printf(s: String, vararg format: Any) {
+            print(String.format(s, *format))
+        }
+
         /**
          * Asserts that the current output matches the [expected] content, or update the [expected] content in place if
          * [creator] is in promote mode. Clears the output buffer.
