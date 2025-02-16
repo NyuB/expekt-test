@@ -78,11 +78,20 @@ data class ExpectTests(
          */
         fun expect(expected: String) =
             try {
-                val lines = actual.toString().split("\n").map { it.trimEnd() }.filter { it.isNotEmpty() }
+                val lines = actual.toString().nonEmptyLines()
                 creator.expect(expected, lines.joinToString(separator = "\n"))
             } finally {
                 actual.clear()
             }
+
+        /**
+         * Asserts that [actual].toString() matches the [expected] content, or update the [expected] content in place if
+         * [creator] is in promote mode.
+         */
+        fun expect(actual: Any, expected: String) {
+            val lines = actual.toString().nonEmptyLines()
+            creator.expect(expected, lines.joinToString(separator = "\n"))
+        }
 
         /**
          * @throws AssertionError if there is still any unhandled output
@@ -96,6 +105,8 @@ data class ExpectTests(
         fun clear() {
             actual.clear()
         }
+
+        private fun String.nonEmptyLines() = this.split("\n").map { it.trimEnd() }.filter { it.isNotEmpty() }
     }
 
     private fun expect(expected: String, actual: String) {

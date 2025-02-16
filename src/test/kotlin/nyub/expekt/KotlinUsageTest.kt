@@ -25,6 +25,18 @@ internal class KotlinUsageTest {
         """
                 .trimIndent()
         )
+
+        class Person(val name: String, val surname: String, val nickname: String) {
+            override fun toString() = "$name '$nickname' $surname"
+        }
+        val billy = Person("Billy", "McCarty", "The Kid")
+        expect(
+            billy,
+            """
+            Billy 'The Kid' McCarty
+        """
+                .trimIndent(),
+        )
     }
 
     @Test
