@@ -218,7 +218,7 @@ data class ExpectTests(
  */
 private val offsets = FileOffsets()
 
-class FileOffsets {
+private class FileOffsets {
     private val offsets = mutableMapOf<String, LineOffsets>()
 
     /** Records a number of lines added (if [offset] is positive) or removed (if [offset] is negative) from a [file] */
@@ -236,7 +236,7 @@ class FileOffsets {
     }
 }
 
-class LineOffsets {
+private class LineOffsets {
     private val offsets = mutableListOf<Offset>()
 
     /** Records an offset from [originalLine] */
