@@ -110,7 +110,7 @@ class ExpectTestExtension : ParameterResolver, BeforeEachCallback, AfterEachCall
 
     override fun afterEach(ctx: ExtensionContext) {
         if (ctx.testMethod.isPresent && ctx.testMethod.get().annotations.any { it is ExpectUnhandledOutput }) {
-            if (expectTest.output.isEmpty())
+            if (expectTest.isEmpty)
                 throw AssertionError(
                     "Expected unhandled output but got nothing, remove the ${ExpectUnhandledOutput::class.simpleName} annotation"
                 )

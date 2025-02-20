@@ -6,18 +6,22 @@ import java.nio.file.Paths
 import org.assertj.core.api.Assertions.assertThat
 
 /**
- * Configuration for expect tests, can be shared and used to spawn individual [ExpectTest]s
+ * In-source snapshot testing library
  *
  * @property resolveClassesFrom indicates where to search for the actual source file when running an expect test
  * @property promote when `true` updates all source files with the current output, otherwise performs equality
  *   assertions
+ * @see ExpectTest
+ * @see <a href="https://github.com/NyuB/expekt-test">Documentation on GitHub</a>
+ * @see <a href="https://blog.janestreet.com/the-joy-of-expect-tests/">Main inspiration for this library</a>
+ * @see <a href="https://ianthehenry.com/posts/my-kind-of-repl/">Detailed article on inline snapshot testing</a>
  */
 data class ExpectTests(
     private val resolveClassesFrom: Path = Paths.get("src/test/kotlin"),
     private val promote: Boolean = false,
 ) {
     /**
-     * All prints output within the provided scopes are stored and can be asserted with [ExpectTest.expect] A call to
+     * All printed outputs within the provided scope are stored and can be asserted with [ExpectTest.expect] A call to
      * [ExpectTest.expect] clears the output. When leaving expectTest, an AssertionError is raised if there is any
      * remaining output.
      *
@@ -41,47 +45,75 @@ data class ExpectTests(
 
     /** Test scope. Maintains an output buffer with the printed content and provides assertions on its content */
     class ExpectTest internal constructor(private val creator: ExpectTests) {
-        private val actual = StringBuilder()
-        internal val output: String
-            get() = actual.toString()
+        /**
+         * Current printed content. [print] calls fill this output, [expect] calls clear it, [end] calls ensure it is
+         * empty.
+         *
+         * @see print
+         * @see expect
+         * @see end
+         */
+        private val output = StringBuilder()
 
-        /** Add [s] to the output buffer */
-        fun print(s: Any) {
-            actual.append(s)
+        /** `true` when [output] is empty */
+        val isEmpty: Boolean
+            get() = output.isEmpty()
+
+        /** Add [content] to the output buffer */
+        fun print(content: Any) {
+            output.append(content)
         }
 
         /**
          * Equivalent to
          *
          * ```kotlin
-         * print(s)
+         * print(content)
          * print("\n")
          * ```
          *
          * @see print
          */
-        fun println(s: Any) {
-            actual.append(s).append("\n")
-        }
-
-        fun newLine() = println("")
-
-        fun printf(s: String, vararg format: Any) {
-            print(String.format(s, *format))
+        fun println(content: Any) {
+            output.append(content).append("\n")
         }
 
         /**
-         * Asserts that the current output matches the [expected] content, or update the [expected] content in place if
-         * [creator] is in promote mode. Clears the output buffer.
+         * Equivalent to
+         *
+         * ```kotlin
+         * print("\n")
+         * ```
+         *
+         * @see print
+         */
+        fun newLine() = print("\n")
+
+        /**
+         * Equivalent to
+         *
+         * ```kotlin
+         * print(String.format(formatString, *format))
+         * ```
+         *
+         * @see print
+         */
+        fun printf(formatString: String, vararg format: Any) {
+            print(String.format(formatString, *format))
+        }
+
+        /**
+         * Asserts that the current [output] matches the [expected] content, or update the [expected] content in place
+         * if [creator] is in promote mode. Clears the [output] buffer.
          *
          * @throws AssertionError if the current output does not match [expected]
          */
         fun expect(expected: String) =
             try {
-                val lines = actual.toString().nonEmptyLines()
+                val lines = output.toString().nonEmptyLines()
                 creator.expect(expected, lines.joinToString(separator = "\n"))
             } finally {
-                actual.clear()
+                output.clear()
             }
 
         /**
@@ -94,16 +126,16 @@ data class ExpectTests(
         }
 
         /**
-         * @throws AssertionError if there is still any unhandled output
+         * @throws AssertionError if there is still any unhandled output in [output]
          * @see expect
          */
         fun end() {
-            if (actual.isNotEmpty()) throw AssertionError("Unhandled output remaining after expect test: '$actual'")
+            if (output.isNotEmpty()) throw AssertionError("Unhandled output remaining after expect test: '$output'")
         }
 
         /** Clears the current output buffer */
         fun clear() {
-            actual.clear()
+            output.clear()
         }
 
         private fun String.nonEmptyLines() = this.split("\n").map { it.trimEnd() }.filter { it.isNotEmpty() }
