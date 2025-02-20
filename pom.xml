@@ -6,6 +6,31 @@
   <artifactId>expekt-test</artifactId>
   <version>1.0-SNAPSHOT</version>
 
+  <name>${project.groupId}:${project.artifactId}</name>
+  <description>In-source snapshot testing for Kotlin/Java</description>
+  <url>https://github.com/NyuB/expekt-test</url>
+
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>http://www.opensource.org/licenses/mit-license.php</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Brice Decaestecker</name>
+      <organization>NyuB</organization>
+      <organizationUrl>https://github.com/NyuB</organizationUrl>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git://github.com/NyuB/expekt-test.git</connection>
+    <developerConnection>scm:git:ssh://github.com:NyuB/expekt-test.git</developerConnection>
+    <url>http://github.com/NyuB/expekt-test/tree/main</url>
+  </scm>
+
   <properties>
     <junit.version>5.10.0</junit.version>
     <kotlin.code.style>official</kotlin.code.style>
