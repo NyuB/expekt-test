@@ -201,20 +201,6 @@ class DemoTest {
         }
     }
 
-    class FixedSignal(private val values: List<SignalState>) : Signal {
-        private var index = 0
-        override val state: SignalState
-            get() = values[index]
-
-        val size = values.size
-
-        override fun tick() {
-            if (index + 1 < values.size) {
-                index++
-            }
-        }
-    }
-
     class CyclicSignal(private val values: List<SignalState>) : Signal {
         private var index = 0
         override val state: SignalState
