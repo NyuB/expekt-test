@@ -8,8 +8,8 @@ import org.assertj.core.api.Assertions.assertThat
 /**
  * Configuration for expect tests, can be shared and used to spawn individual [ExpectTest]s
  *
- * @property resolveClassesFrom indicates where to search for the actual source file when running and expect test
- * @property promote when `true` updates all source files with the current output, otherwise perform usual equality
+ * @property resolveClassesFrom indicates where to search for the actual source file when running an expect test
+ * @property promote when `true` updates all source files with the current output, otherwise performs equality
  *   assertions
  */
 data class ExpectTests(
