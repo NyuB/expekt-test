@@ -41,7 +41,7 @@ import org.junit.jupiter.api.extension.ParameterResolver
  * - annotation: [Promote]
  *
  * #### Classes root path
- * - default: `"src/test/kotlin"`
+ * - default: `"src/test/java"`
  * - system property: [CLASSES_ROOT_PROPERTY_KEY]
  * - annotation: [RootPath]
  */
@@ -60,7 +60,7 @@ class ExpectTestExtension : ParameterResolver, BeforeEachCallback, AfterEachCall
     @Target(AnnotationTarget.CLASS) annotation class RootPath(val value: String)
 
     private var promote: Boolean = System.getProperty(PROMOTE_PROPERTY_KEY, "false") == "true"
-    private var root: Path = System.getProperty(CLASSES_ROOT_PROPERTY_KEY, "src/test/kotlin").let(::Path)
+    private var root: Path = System.getProperty(CLASSES_ROOT_PROPERTY_KEY, "src/test/java").let(::Path)
     private lateinit var expectTests: ExpectTests
     private lateinit var expectTest: ExpectTests.ExpectTest
 
