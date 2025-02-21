@@ -1,17 +1,36 @@
 # Expekt tests
 
-Minimal in-source snapshot tests for Kotlin and Java, inspired by JaneStreet's [expect-tests framework for OCaml](https://blog.janestreet.com/the-joy-of-expect-tests/)
+Inline snapshot testing for Kotlin and Java, inspired by JaneStreet's [expect-tests framework for OCaml](https://blog.janestreet.com/the-joy-of-expect-tests/)
+
+![waveforms demo](doc/waveforms.gif)
+
+- [Principles](#principles)
+- [External resources on snapshot testing](#external-resources-on-snapshot-testing)
+- [Setup](#setup)
+  + [Maven](#from-maven)
+  + [From Source](#from-source)
+- [Usage](#usage)
+  + [Kotlin](#kotlin)
+  + [Java](#java)
 
 ## Principles
 
-Expekt is a lightweight acceptance test tool:
+Expekt is a lightweight **inline** **snapshot testing** tool:
 - it fails when there is a diff between expected outputs and actual ones. With Expekt, the expected outputs are expressed as raw string blocks in source code.
-- it offers a 'promotion' mechanism to replace the expected outputs with the actual ones when the user (developer) decides the change is suitable. With Expekt, the promotion is done 'in source', directly altering the string blocks in the source code. 
+- it offers a 'promotion' mechanism to replace the expected outputs with the actual ones when the user (developer) decides the change is suitable. The promotion is done directly in the source code, altering the string blocks. 
 
 This means that efforts to represent your objects as readable strings, (such as ascii art, tables, graphs ...) can be directly exploited as readable assertions.
 It also makes updating these assertions effortless, should their representation change.
 
-![waveforms demo](doc/waveforms.gif)
+## External resources on snapshot testing
+
+Inline snapshot (also called approval, acceptance, golden-master, ...) is a popular technique in many ecosystems.
+
+A few resources on this topic:
+- [The JaneStreet article on the expect-test library that inspired Expekt](https://blog.janestreet.com/the-joy-of-expect-tests/)
+- [An article describing the advantages of inline snapshot testing](https://ianthehenry.com/posts/my-kind-of-repl/)
+- [An article from TigerBeetle describing their Zig library for inline snapshot testing](https://tigerbeetle.com/blog/2024-05-14-snapshot-testing-for-the-masses/)
+- [Insta, a Rust library for snapshot testing](https://tigerbeetle.com/blog/2024-05-14-snapshot-testing-for-the-masses/)
 
 ## Setup
 
@@ -23,7 +42,7 @@ Add expekt dependency to your `pom.xml`:
 <dependency>
     <groupId>io.github.nyub</groupId>
     <artifactId>expekt-test</artifactId>
-    <version>0.0.1-RC0</version>
+    <version>0.0.1</version>
     <scope>test</scope>
 </dependency>
 ```

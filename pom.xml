@@ -7,7 +7,7 @@
   <version>0.0.1-SNAPSHOT</version>
 
   <name>${project.groupId}:${project.artifactId}</name>
-  <description>In-source snapshot testing for Kotlin/Java</description>
+  <description>Inline snapshot testing for Kotlin and Java</description>
   <url>https://github.com/NyuB/expekt-test</url>
 
   <licenses>
