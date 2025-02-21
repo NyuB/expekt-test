@@ -15,8 +15,23 @@ It also makes updating these assertions effortless, should their representation 
 
 ## Setup
 
-There is currently no deployed artifact, but the source code is only comprised of 2 files (and even 1 if you don't use the JUnit extension).
-Feel free to copy-paste and experiment.
+### From Maven
+
+Add expekt dependency to your `pom.xml`:
+
+```xml
+<dependency>
+    <groupId>io.github.nyub</groupId>
+    <artifactId>expekt-test</artifactId>
+    <version>0.0.1-RC0</version>
+    <scope>test</scope>
+</dependency>
+```
+
+### From source
+
+The source code is only comprised of 2 files (and even 1 if you don't use the JUnit extension).
+Feel free to download [ExpectTests.kt](src/main/kotlin/nyub/expekt/ExpectTests.kt) and [ExpectTestExtension.kt](src/main/kotlin/nyub/expekt/junit/ExpectTestExtension.kt) directly into your sources and experiment.
 
 ## Usage
 
