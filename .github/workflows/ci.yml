@@ -18,13 +18,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
           architecture: x64
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.3'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+
+      - name: Enforce code formatting
+        run: make fmt-check
 
       - name: Run tests
         run: make test
@@ -39,7 +45,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK 17 & release credentials
         uses: actions/setup-java@v4
         with:
           java-version: '17'
@@ -60,13 +66,16 @@ jobs:
           MAVEN_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.RELEASE_GPG_PASSPHRASE }}
 
+      - name: Changelog
+        run: make release_changelog.md
+
       - name: GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           name: ${{ github.event.inputs.version }}
           tag_name: ${{ github.event.inputs.version }}
           target_commitish: main
-          body: "TODO: Fill changelog for release ${{ github.event.inputs.version }}"
+          body_path: release_changelog.md
           token: ${{ secrets.GITHUB_TOKEN }}
           files: |
             src/main/kotlin/nyub/expekt/ExpectTests.kt
