@@ -30,6 +30,7 @@ jobs:
 
       - name: Deploy to maven central
         run: |
+          mvn versions:set -DnewVersion=${{ github.event.inputs.version }}
           mvn --batch-mode deploy
         env:
           MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
