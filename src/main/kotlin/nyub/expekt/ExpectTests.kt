@@ -110,8 +110,8 @@ data class ExpectTests(
          */
         fun expect(expected: String) =
             try {
-                val lines = output.toString().nonEmptyLines()
-                creator.expect(expected, lines.joinToString(separator = "\n"))
+                val actual = output.toString().trimEmptyLines()
+                creator.expect(expected, actual)
             } finally {
                 output.clear()
             }
@@ -121,8 +121,8 @@ data class ExpectTests(
          * [creator] is in promote mode.
          */
         fun Any.expect(expected: String) {
-            val lines = toString().nonEmptyLines()
-            creator.expect(expected, lines.joinToString(separator = "\n"))
+            val actualString = toString().trimEmptyLines()
+            creator.expect(expected, actualString)
         }
 
         /**
@@ -138,7 +138,12 @@ data class ExpectTests(
             output.clear()
         }
 
-        private fun String.nonEmptyLines() = this.split("\n").map { it.trimEnd() }.filter { it.isNotEmpty() }
+        private fun String.trimEmptyLines() =
+            this.split("\n")
+                .map { it.trimEnd() }
+                .dropWhile { it.isEmpty() }
+                .dropLastWhile { it.isEmpty() }
+                .joinToString(separator = "\n")
     }
 
     private fun expect(expected: String, actual: String) {

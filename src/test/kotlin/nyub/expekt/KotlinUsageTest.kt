@@ -96,4 +96,21 @@ internal class KotlinUsageTest {
                     .trimIndent()
             )
         }
+
+    @Test
+    fun `do not remove non leading or trailing blank lines`() = expectTest {
+        println("Start")
+        newLine()
+        newLine()
+        print("End")
+        expect(
+            """
+            Start
+            
+            
+            End
+        """
+                .trimIndent()
+        )
+    }
 }

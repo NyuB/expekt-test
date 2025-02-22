@@ -3,6 +3,7 @@
 - To allow to restrict triple quoted string search range, `expect(actual, expected)` is now an extension function `actual.expect(expected)`.
 
 ## Bugfixes
+- non-trailing or non-leading empty lines were removed from the actual content (leading and trailing empty lines are still removed)
 - an erroneous call to `expect("...")` without triple quoted string block would replace the next block in the file instead of raising an error
 ```kotlin
 print("Not within triple quotes")
