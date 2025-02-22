@@ -117,11 +117,11 @@ data class ExpectTests(
             }
 
         /**
-         * Asserts that [actual].toString() matches the [expected] content, or update the [expected] content in place if
+         * Asserts that `this`.toString() matches the [expected] content, or update the [expected] content in place if
          * [creator] is in promote mode.
          */
-        fun expect(actual: Any, expected: String) {
-            val lines = actual.toString().nonEmptyLines()
+        fun Any.expect(expected: String) {
+            val lines = toString().nonEmptyLines()
             creator.expect(expected, lines.joinToString(separator = "\n"))
         }
 
@@ -174,8 +174,11 @@ data class ExpectTests(
 
     private fun findTripleQuotedStringStart(lines: List<String>, startIndex: Int): Int? {
         var index = startIndex
-        while (index < lines.size && !lines[index].contains("\"\"\"")) index++
-        return if (index == lines.size) null else index
+        while (index < lines.size && index < startIndex + 2) {
+            if (lines[index].contains("\"\"\"")) return index
+            index++
+        }
+        return null
     }
 
     private class ExpectedLinesReplacement(val before: List<String>, between: List<String>, val after: List<String>) {

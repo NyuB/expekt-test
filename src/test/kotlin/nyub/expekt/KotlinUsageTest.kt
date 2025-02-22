@@ -30,12 +30,11 @@ internal class KotlinUsageTest {
             override fun toString() = "$name '$nickname' $surname"
         }
         val billy = Person("Billy", "McCarty", "The Kid")
-        expect(
-            billy,
+        billy.expect(
             """
-            Billy 'The Kid' McCarty
-        """
-                .trimIndent(),
+                Billy 'The Kid' McCarty
+            """
+                .trimIndent()
         )
     }
 
@@ -88,5 +87,13 @@ internal class KotlinUsageTest {
                 .hasMessageContaining("Could not find expected string")
                 .hasMessageContaining("${KotlinUsageTest::class.simpleName}.kt")
                 .hasMessageContaining("triple-quoted block")
+
+            print("Do not confuse this block with the missing one above")
+            expect(
+                """
+                Do not confuse this block with the missing one above
+            """
+                    .trimIndent()
+            )
         }
 }
