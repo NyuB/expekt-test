@@ -113,4 +113,19 @@ internal class KotlinUsageTest {
                 .trimIndent()
         )
     }
+
+    @Test
+    fun `handle cases where there is more newline in the expected string than actual lines in the string blocks`() =
+        ExpectTests(promote = true).expectTest {
+            print("Start")
+            newLine()
+            print("End")
+            expect(
+                """
+            Start
+            End
+        """
+                    .trimIndent()
+            )
+        }
 }

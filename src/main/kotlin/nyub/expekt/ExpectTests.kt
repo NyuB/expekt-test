@@ -148,40 +148,47 @@ data class ExpectTests(
 
     private fun expect(expected: String, actual: String) {
         if (promote) {
-            promote(expected, actual)
+            promote(actual)
         } else {
             assertThat(actual).isEqualTo(expected.trim { it.isWhitespace() || it == '\n' })
         }
     }
 
-    private fun promote(expected: String, actual: String) {
+    private fun promote(actual: String) {
         val callSite = callSite()
         val callSiteFile =
             resolveClassesFrom.resolve(callSite.className.replace(".", "/")).parent.resolve(callSite.fileName!!)
         val callSiteLines = Files.readString(callSiteFile).split("\n")
-        val expectedLines = if (expected.isEmpty()) emptyList() else expected.split("\n").dropLastWhile { it.isEmpty() }
 
         val lineNumber = offsets.getAdjustedLine(callSiteFile, callSite.lineNumber)
-        val stringStartIndex =
+        val (stringStartIndex, stringEndIndex) =
             findTripleQuotedStringStart(callSiteLines, lineNumber - 1)
                 ?: throw RuntimeException(
                     "Could not find expected string at $callSiteFile:$lineNumber, maybe it is not within a triple-quoted block?"
                 )
 
         val before = callSiteLines.subList(0, stringStartIndex + 1)
-        val between = callSiteLines.subList(stringStartIndex + 1, stringStartIndex + 1 + expectedLines.size)
-        val after = callSiteLines.subList(stringStartIndex + 1 + expectedLines.size, callSiteLines.size)
+        val between = callSiteLines.subList(stringStartIndex + 1, stringEndIndex)
+        val after = callSiteLines.subList(stringEndIndex, callSiteLines.size)
 
         val actualLines = actual.split("\n")
         Files.writeString(callSiteFile, ExpectedLinesReplacement(before, between, after).replaceWith(actualLines))
         offsets.record(callSiteFile, callSite.lineNumber, actualLines.size - between.size)
     }
 
-    private fun findTripleQuotedStringStart(lines: List<String>, startIndex: Int): Int? {
-        var index = startIndex
-        while (index < lines.size && index < startIndex + 2) {
-            if (lines[index].contains("\"\"\"")) return index
-            index++
+    private fun findTripleQuotedStringStart(lines: List<String>, searchStartIndex: Int): Pair<Int, Int>? {
+        var startIndex = searchStartIndex
+        val maxStartIndex = searchStartIndex + 1
+        while (startIndex < lines.size && startIndex <= maxStartIndex) {
+            if (lines[startIndex].contains("\"\"\"")) break
+            startIndex++
+        }
+        if (startIndex >= lines.size || startIndex > maxStartIndex) return null
+
+        var endIndex = startIndex + 1
+        while (endIndex < lines.size) {
+            if (lines[endIndex].contains("\"\"\"")) return startIndex to endIndex
+            endIndex++
         }
         return null
     }
