@@ -1,3 +1,7 @@
+![ci-badge](https://github.com/NyuB/expekt-test/actions/workflows/ci.yml/badge.svg?branch=main)
+![latest release](https://img.shields.io/github/release/NyuB/expekt-test)
+![latest release date](https://img.shields.io/github/release-date/NyuB/expekt-test)
+
 # Expekt tests
 
 Inline snapshot testing for Kotlin and Java, inspired by JaneStreet's [expect-tests framework for OCaml](https://blog.janestreet.com/the-joy-of-expect-tests/)
