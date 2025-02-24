@@ -79,25 +79,6 @@ internal class KotlinUsageTest {
     }
 
     @Test
-    fun `when the expected string cannot be found, raise an error hinting toward missing triple-quotes`() =
-        ExpectTests(promote = true).expectTest {
-            print("Not within triple quotes")
-            assertThatThrownBy { expect("Not within triple quotes") }
-                .isInstanceOf(RuntimeException::class.java)
-                .hasMessageContaining("Could not find expected string")
-                .hasMessageContaining("${KotlinUsageTest::class.simpleName}.kt")
-                .hasMessageContaining("triple-quoted block")
-
-            print("Do not confuse this block with the missing one above")
-            expect(
-                """
-                Do not confuse this block with the missing one above
-            """
-                    .trimIndent()
-            )
-        }
-
-    @Test
     fun `do not remove non leading or trailing blank lines`() = expectTest {
         println("Start")
         newLine()

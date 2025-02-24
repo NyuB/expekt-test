@@ -15,13 +15,13 @@ expect("""
     """.trimIndent())
 ```
 
-Note that, since the search is based on the triple quote sequence that could be on the line after the expect call, two consecutive calls to expect can still trigger this problem:
+Note that, since the search is based on the triple quote sequence that could be on the line after the expect call, the pathological example below can still trigger this problem:
 ```kotlin
 print("Not within triple quotes")
 expect("Not within triple quotes") // not within tripe quotes
-/* This will be considered as the triple quote for the expect call above */ expect("""
-Immediate call on the line after erroneous call
-""".trimIndent())
+"""
+This will be considered as the triple quote for the expect call above
+""".trimIndent()
 ```
 
 # 0.0.1

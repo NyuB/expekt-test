@@ -176,14 +176,37 @@ data class ExpectTests(
         offsets.record(callSiteFile, callSite.lineNumber, actualLines.size - between.size)
     }
 
-    private fun findTripleQuotedStringStart(lines: List<String>, searchStartIndex: Int): Pair<Int, Int>? {
-        var startIndex = searchStartIndex
-        val maxStartIndex = searchStartIndex + 1
-        while (startIndex < lines.size && startIndex <= maxStartIndex) {
-            if (lines[startIndex].contains("\"\"\"")) break
-            startIndex++
-        }
-        if (startIndex >= lines.size || startIndex > maxStartIndex) return null
+    /**
+     * Naive string search, requiring to write expect calls following a contrived pattern, could be improved with an
+     * actual Kotlin lexing
+     *
+     * Searches for
+     *
+     * ```kotlin
+     * expect("""
+     * <CONTENT>
+     * """)
+     * ```
+     *
+     * or
+     *
+     * ```kotlin
+     * expect(
+     * """
+     * <CONTENT>
+     * """)
+     * ```
+     *
+     * @return the line index of the opening triple-quote and the line index of the closing triple-quote, searching from
+     *   [expectCallSite] line index. `null` if one of the two markers could not be found
+     */
+    private fun findTripleQuotedStringStart(lines: List<String>, expectCallSite: Int): Pair<Int, Int>? {
+        val startIndex =
+            // String block on the same line as expect(
+            if (expectCallSite < lines.size && lines[expectCallSite].trimEnd().endsWith("expect(\"\"\"")) expectCallSite
+            // String block on the line immediately after expect(
+            else if (expectCallSite < lines.size - 1 && lines[expectCallSite + 1].trim() == "\"\"\"") expectCallSite + 1
+            else return null
 
         var endIndex = startIndex + 1
         while (endIndex < lines.size) {
