@@ -66,6 +66,19 @@ internal class ExpectTestsTest {
             ExpectTests(promote = true).expectTest { assertThatThrownBy { expect("""""") }.isTripleQuotedBlockError() }
 
         @Test
+        fun `triple quotes not on the next line after expect call`() =
+            ExpectTests(promote = true).expectTest {
+                assertThatThrownBy {
+                        expect( // Keep string block on the next line
+                            // String block should be here
+                            """
+                                     """
+                        )
+                    }
+                    .isTripleQuotedBlockError()
+            }
+
+        @Test
         fun `standalone string block after erroneous call to expect`() =
             ExpectTests(promote = true).expectTest {
                 assertThatThrownBy {
