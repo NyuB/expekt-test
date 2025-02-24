@@ -16,6 +16,7 @@ Inline snapshot testing for Kotlin and Java, inspired by JaneStreet's [expect-te
 - [Usage](#usage)
   + [Kotlin](#kotlin)
   + [Java](#java)
+  + [Constraints on expected string blocks](#constraints-ont-expected-string-blocks)
 
 ## Principles
 
