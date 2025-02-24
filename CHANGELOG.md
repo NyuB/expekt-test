@@ -1,4 +1,6 @@
-# Last developments
+# 0.1.0
+Mostly bug fixes related to erroneous expect("...") calls without proper triple-quoted block formatting.
+
 ## Breaking changes
 - To allow to restrict triple quoted string search range, `expect(actual, expected)` is now an extension function `actual.expect(expected)`.
 
