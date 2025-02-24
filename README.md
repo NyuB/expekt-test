@@ -82,61 +82,61 @@ This imposes some formatting rule regarding the "expect" call.
     1) on the same line as the `expect(` call, at the end of the line
     2) on the line just below the `expect(` call, alone on this line
 
-OK:
+#### OK:
 
 ```kotlin
-  expect("""
-  <CONTENT>
-  """)
+expect("""
+<CONTENT>
+""")
 ```
 
 ```kotlin
-  expect(
-  """
-  <CONTENT>
-  """)
+expect(
+"""
+<CONTENT>
+""")
 ```
 
 ```kotlin
-  expect(
-  """
-  <CONTENT>
-  """
-  )
+expect(
+"""
+<CONTENT>
+"""
+)
 ```
 
-Not OK:
+#### Not OK:
 
 ```kotlin
-  expect("<CONTENT>")
+expect("<CONTENT>")
 ```
 
-(because the expected content is not within a triple-quoted block)
+- (because the expected content is not within a triple-quoted block)
 
 ```kotlin
-  expect("""<CONTENT>
-  """)
+expect("""<CONTENT>
+""")
 ```
 
-(because the starting quotes are not at the end of the line)
+- (because the starting quotes are not at the end of the line)
 
 ```kotlin
-  expect(
-  f("""
-  <CONTENT>
-  """))
+expect(
+f("""
+<CONTENT>
+"""))
 ```
 
-(because the starting quotes are not alone on their line)
+- (because the starting quotes are not alone on their line)
 
 ```kotlin
-  fun alias(s: String) = expect(s)
-  alias(
-  """
-  <CONTENT>
-  """
-  )
+fun alias(s: String) = expect(s)
+alias(
+"""
+<CONTENT>
+"""
+)
 ```
 
-(because expect is aliased, so the search starts from the actual call site on the first line)
+- (because expect is aliased, so the search starts from the actual call site on the first line)
 
