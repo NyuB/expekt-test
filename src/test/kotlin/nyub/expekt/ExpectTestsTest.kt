@@ -101,6 +101,19 @@ internal class ExpectTestsTest {
                 )
             }
 
+        @Test
+        fun `aliased expect`() =
+            ExpectTests(promote = true).expectTest {
+                assertThatThrownBy {
+                        fun alias(s: String) = expect(s)
+                        alias(
+                            """
+                           """
+                        )
+                    }
+                    .isTripleQuotedBlockError()
+            }
+
         private fun AbstractThrowableAssert<*, out Throwable>.isTripleQuotedBlockError():
             AbstractThrowableAssert<*, *>? =
             this.isInstanceOf(RuntimeException::class.java)
