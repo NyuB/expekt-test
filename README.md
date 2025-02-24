@@ -16,7 +16,7 @@ Inline snapshot testing for Kotlin and Java, inspired by JaneStreet's [expect-te
 - [Usage](#usage)
   + [Kotlin](#kotlin)
   + [Java](#java)
-  + [Constraints on expected string blocks](#constraints-ont-expected-string-blocks)
+  + [Constraints on expected string blocks](#constraints-on-expected-string-blocks)
 
 ## Principles
 
@@ -71,7 +71,7 @@ The recommended usage for Java is to use the provided JUnit 5 extension. See [th
 
 For non-junit codebases, the Kotlin scope functions are usable on the Java side, with slightly degraded ergonomics.
 
-### Constraints ont expected string blocks
+### Constraints on expected string blocks
 
 Expekt detects string blocks to check and promote based on a few heuristics.
 
