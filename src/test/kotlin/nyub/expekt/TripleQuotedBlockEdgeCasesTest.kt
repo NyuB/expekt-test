@@ -1,5 +1,6 @@
 package nyub.expekt
 
+import org.assertj.core.api.AbstractThrowableAssert
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 
@@ -8,11 +9,7 @@ class TripleQuotedBlockEdgeCasesTest {
     fun `when the expected string cannot be found, raise an error hinting toward missing triple-quotes`() =
         ExpectTests(promote = true).expectTest {
             print("Not within triple quotes")
-            assertThatThrownBy { expect("Not within triple quotes") }
-                .isInstanceOf(RuntimeException::class.java)
-                .hasMessageContaining("Could not find expected string")
-                .hasMessageContaining("${TripleQuotedBlockEdgeCasesTest::class.simpleName}.kt")
-                .hasMessageContaining("triple-quoted block")
+            assertThatThrownBy { expect("Not within triple quotes") }.isTripleQuotedBlockError()
 
             print("Do not confuse this block with the missing one above")
             expect(
@@ -31,21 +28,12 @@ class TripleQuotedBlockEdgeCasesTest {
                     expect("Not within triple quotes")
                     expect("""""")
                 }
-                .isInstanceOf(RuntimeException::class.java)
-                .hasMessageContaining("Could not find expected string")
-                .hasMessageContaining("${TripleQuotedBlockEdgeCasesTest::class.simpleName}.kt")
-                .hasMessageContaining("triple-quoted block")
+                .isTripleQuotedBlockError()
         }
 
     @Test
     fun `immediately closed string block`() =
-        ExpectTests(promote = true).expectTest {
-            assertThatThrownBy { expect("""""") }
-                .isInstanceOf(RuntimeException::class.java)
-                .hasMessageContaining("Could not find expected string")
-                .hasMessageContaining("${TripleQuotedBlockEdgeCasesTest::class.simpleName}.kt")
-                .hasMessageContaining("triple-quoted block")
-        }
+        ExpectTests(promote = true).expectTest { assertThatThrownBy { expect("""""") }.isTripleQuotedBlockError() }
 
     @Test
     fun `standalone string block after erroneous call to expect`() =
@@ -57,10 +45,7 @@ class TripleQuotedBlockEdgeCasesTest {
                     """
                         .let(::println)
                 }
-                .isInstanceOf(RuntimeException::class.java)
-                .hasMessageContaining("Could not find expected string")
-                .hasMessageContaining("${TripleQuotedBlockEdgeCasesTest::class.simpleName}.kt")
-                .hasMessageContaining("triple-quoted block")
+                .isTripleQuotedBlockError()
         }
 
     @Test
@@ -72,4 +57,10 @@ class TripleQuotedBlockEdgeCasesTest {
                 """
             )
         }
+
+    private fun AbstractThrowableAssert<*, out Throwable>.isTripleQuotedBlockError(): AbstractThrowableAssert<*, *>? =
+        this.isInstanceOf(RuntimeException::class.java)
+            .hasMessageContaining("Could not find expected string")
+            .hasMessageContaining("${TripleQuotedBlockEdgeCasesTest::class.simpleName}.kt")
+            .hasMessageContaining("triple-quoted block")
 }
