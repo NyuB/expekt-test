@@ -62,4 +62,14 @@ class TripleQuotedBlockEdgeCasesTest {
                 .hasMessageContaining("${TripleQuotedBlockEdgeCasesTest::class.simpleName}.kt")
                 .hasMessageContaining("triple-quoted block")
         }
+
+    @Test
+    fun `comment after expect call`() =
+        ExpectTests(promote = true).expectTest {
+            expect( // Comment
+                """
+
+                """
+            )
+        }
 }

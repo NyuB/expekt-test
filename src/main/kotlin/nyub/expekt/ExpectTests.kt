@@ -202,7 +202,7 @@ data class ExpectTests(
      */
     private fun findTripleQuotedStringStart(lines: List<String>, expectCallSite: Int): Pair<Int, Int>? {
         if (expectCallSite >= lines.size) return null
-        val callSiteLine = lines[expectCallSite]
+        val callSiteLine = lines[expectCallSite].trimComment()
         val startIndex =
             // String block on the same line as expect(
             if (callSiteLine.trimEnd().endsWith("expect($tripleQuotes")) expectCallSite
@@ -258,6 +258,12 @@ data class ExpectTests(
 }
 
 private const val tripleQuotes = "\"\"\""
+
+private fun String.trimComment(): String {
+    val commentIndex = this.indexOf("//")
+    if (commentIndex < 0) return this
+    return this.substring(0, commentIndex)
+}
 
 /**
  * Globally records line additions or removal to keep line counts up-to-date if there are multiple promotions to the
