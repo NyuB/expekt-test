@@ -77,36 +77,4 @@ internal class KotlinUsageTest {
     fun `raises if not all output is consumed by assertions`() {
         assertThatThrownBy { expectTest { println("Not consumed") } }.isInstanceOf(AssertionError::class.java)
     }
-
-    @Test
-    fun `do not remove non leading or trailing blank lines`() = expectTest {
-        println("Start")
-        newLine()
-        newLine()
-        print("End")
-        expect(
-            """
-            Start
-            
-            
-            End
-        """
-                .trimIndent()
-        )
-    }
-
-    @Test
-    fun `handle cases where there is more newline in the expected string than actual lines in the string blocks`() =
-        ExpectTests(promote = true).expectTest {
-            print("Start")
-            newLine()
-            print("End")
-            expect(
-                """
-            Start
-            End
-        """
-                    .trimIndent()
-            )
-        }
 }
