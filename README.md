@@ -69,3 +69,74 @@ The JUnit 5 extension is also usable from the Kotlin side, even if it brings few
 The recommended usage for Java is to use the provided JUnit 5 extension. See [the java tests](src/test/kotlin/nyub/expekt/JavaUsageTest.java) for examples
 
 For non-junit codebases, the Kotlin scope functions are usable on the Java side, with slightly degraded ergonomics.
+
+### Constraints ont expected string blocks
+
+Expekt detects string blocks to check and promote based on a few heuristics.
+
+This imposes some formatting rule regarding the "expect" call.
+
+1) the `expect(` call should be written in place, not aliased
+2) the expected content should be in a triple-quoted-string block
+3) the starting triple-quotes should either be:
+    1) on the same line as the `expect(` call, at the end of the line
+    2) on the line just below the `expect(` call, alone on this line
+
+OK:
+
+```kotlin
+  expect("""
+  <CONTENT>
+  """)
+```
+
+```kotlin
+  expect(
+  """
+  <CONTENT>
+  """)
+```
+
+```kotlin
+  expect(
+  """
+  <CONTENT>
+  """
+  )
+```
+
+Not OK:
+
+```kotlin
+  expect("<CONTENT>")
+```
+
+(because the expected content is not within a triple-quoted block)
+
+```kotlin
+  expect("""<CONTENT>
+  """)
+```
+
+(because the starting quotes are not at the end of the line)
+
+```kotlin
+  expect(
+  f("""
+  <CONTENT>
+  """))
+```
+
+(because the starting quotes are not alone on their line)
+
+```kotlin
+  fun alias(s: String) = expect(s)
+  alias(
+  """
+  <CONTENT>
+  """
+  )
+```
+
+(because expect is aliased, so the search starts from the actual call site on the first line)
+
