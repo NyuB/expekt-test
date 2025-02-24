@@ -205,19 +205,19 @@ data class ExpectTests(
         val callSiteLine = lines[expectCallSite]
         val startIndex =
             // String block on the same line as expect(
-            if (callSiteLine.trimEnd().endsWith("expect(\"\"\"")) expectCallSite
+            if (callSiteLine.trimEnd().endsWith("expect($tripleQuotes")) expectCallSite
             // String block on the line immediately after expect(
             else if (
                 callSiteLine.trim().endsWith("expect(") &&
                     expectCallSite < lines.size - 1 &&
-                    lines[expectCallSite + 1].trim() == "\"\"\""
+                    lines[expectCallSite + 1].trim() == tripleQuotes
             )
                 expectCallSite + 1
             else return null
 
         var endIndex = startIndex + 1
         while (endIndex < lines.size) {
-            if (lines[endIndex].contains("\"\"\"")) return startIndex to endIndex
+            if (lines[endIndex].contains(tripleQuotes)) return startIndex to endIndex
             endIndex++
         }
         return null
@@ -256,6 +256,8 @@ data class ExpectTests(
         return currentStack[thisMethodIndex + 1]
     }
 }
+
+private const val tripleQuotes = "\"\"\""
 
 /**
  * Globally records line additions or removal to keep line counts up-to-date if there are multiple promotions to the
