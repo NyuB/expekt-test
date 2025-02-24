@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test
 
 internal class KotlinUsageTest {
     /** Shared configuration for expect tests */
-    private val e = ExpectTests(promote = System.getProperty("nyub.expekt.promote", "false") == "true")
+    private val expectTests = ExpectTests(promote = System.getProperty("nyub.expekt.promote", "false") == "true")
 
     /** Alias to avoid typing e.expectTest for the generic case */
-    private fun expectTest(test: ExpectTests.ExpectTest.() -> Unit) = e.expectTest(test)
+    private fun expectTest(test: ExpectTests.ExpectTest.() -> Unit) = expectTests.expectTest(test)
 
     @Test
     fun `happy path`() = expectTest {
@@ -25,11 +25,16 @@ internal class KotlinUsageTest {
         """
                 .trimIndent()
         )
+    }
 
+    @Test
+    fun `direct expect call on any object`() = expectTest {
         class Person(val name: String, val surname: String, val nickname: String) {
             override fun toString() = "$name '$nickname' $surname"
         }
+
         val billy = Person("Billy", "McCarty", "The Kid")
+
         billy.expect(
             """
                 Billy 'The Kid' McCarty
@@ -47,6 +52,7 @@ internal class KotlinUsageTest {
         """
                 .trimIndent()
         )
+
         print("Two")
         expect(
             """
