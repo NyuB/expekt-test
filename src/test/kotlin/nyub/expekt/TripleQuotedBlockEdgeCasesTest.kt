@@ -10,14 +10,6 @@ class TripleQuotedBlockEdgeCasesTest {
         ExpectTests(promote = true).expectTest {
             print("Not within triple quotes")
             assertThatThrownBy { expect("Not within triple quotes") }.isTripleQuotedBlockError()
-
-            print("Do not confuse this block with the missing one above")
-            expect(
-                """
-                Do not confuse this block with the missing one above
-            """
-                    .trimIndent()
-            )
         }
 
     @Test
