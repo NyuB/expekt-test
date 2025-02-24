@@ -1,3 +1,9 @@
+# Current developments
+
+## Features
+
+- Widen supported Java version, produce Java 15 bytecode instead of 17
+
 # 0.1.0
 Mostly bug fixes related to erroneous expect("...") calls without proper triple-quoted block formatting.
 
