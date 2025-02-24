@@ -6,22 +6,10 @@
 - non-trailing or non-leading empty lines were removed from the actual content (leading and trailing empty lines are still removed)
 - an erroneous call to `expect("...")` without triple quoted string block would replace the next block in the file instead of raising an error
 ```kotlin
-print("Not within triple quotes")
 expect("Not within triple quotes") // not within tripe quotes
-
-print("Do not confuse this block with the missing one above")
 expect("""
     Do not confuse this block with the missing one above
     """.trimIndent())
-```
-
-Note that, since the search is based on the triple quote sequence that could be on the line after the expect call, the pathological example below can still trigger this problem:
-```kotlin
-print("Not within triple quotes")
-expect("Not within triple quotes") // not within tripe quotes
-"""
-This will be considered as the triple quote for the expect call above
-""".trimIndent()
 ```
 
 # 0.0.1

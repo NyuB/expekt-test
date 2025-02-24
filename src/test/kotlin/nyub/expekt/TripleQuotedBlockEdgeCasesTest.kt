@@ -46,4 +46,20 @@ class TripleQuotedBlockEdgeCasesTest {
                 .hasMessageContaining("${TripleQuotedBlockEdgeCasesTest::class.simpleName}.kt")
                 .hasMessageContaining("triple-quoted block")
         }
+
+    @Test
+    fun `standalone string block after erroneous call to expect`() =
+        ExpectTests(promote = true).expectTest {
+            assertThatThrownBy {
+                    // The next two statements are on consecutive lines
+                    expect("Not within triple quotes")
+                    """
+                    """
+                        .let(::println)
+                }
+                .isInstanceOf(RuntimeException::class.java)
+                .hasMessageContaining("Could not find expected string")
+                .hasMessageContaining("${TripleQuotedBlockEdgeCasesTest::class.simpleName}.kt")
+                .hasMessageContaining("triple-quoted block")
+        }
 }

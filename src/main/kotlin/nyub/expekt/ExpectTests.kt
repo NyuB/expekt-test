@@ -201,11 +201,18 @@ data class ExpectTests(
      *   [expectCallSite] line index. `null` if one of the two markers could not be found
      */
     private fun findTripleQuotedStringStart(lines: List<String>, expectCallSite: Int): Pair<Int, Int>? {
+        if (expectCallSite >= lines.size) return null
+        val callSiteLine = lines[expectCallSite]
         val startIndex =
             // String block on the same line as expect(
-            if (expectCallSite < lines.size && lines[expectCallSite].trimEnd().endsWith("expect(\"\"\"")) expectCallSite
+            if (callSiteLine.trimEnd().endsWith("expect(\"\"\"")) expectCallSite
             // String block on the line immediately after expect(
-            else if (expectCallSite < lines.size - 1 && lines[expectCallSite + 1].trim() == "\"\"\"") expectCallSite + 1
+            else if (
+                callSiteLine.trim().endsWith("expect(") &&
+                    expectCallSite < lines.size - 1 &&
+                    lines[expectCallSite + 1].trim() == "\"\"\""
+            )
+                expectCallSite + 1
             else return null
 
         var endIndex = startIndex + 1
