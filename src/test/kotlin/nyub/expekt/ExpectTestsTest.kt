@@ -55,7 +55,12 @@ internal class ExpectTestsTest {
                 assertThatThrownBy {
                         // The next two statements are on consecutive lines
                         expect("Not within triple quotes")
-                        expect("""""")
+                        expect(
+                            """
+                            
+                        """
+                                .trimIndent()
+                        )
                     }
                     .isTripleQuotedBlockError()
             }
