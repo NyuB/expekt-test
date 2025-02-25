@@ -149,3 +149,4 @@ alias(
 
 - (because expect is aliased, so the search starts from the actual call site on the first line)
 
+See [ExpectTestsTest.TripleQuotesSearchEdgeCasesTest](src/test/kotlin/nyub/expekt/ExpectTestsTest.kt) for more invalid examples

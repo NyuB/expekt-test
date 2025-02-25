@@ -46,7 +46,7 @@ internal class ExpectTestsTest {
         @Test
         fun `when the expected string cannot be found, raise an error hinting toward missing triple-quotes`() =
             ExpectTests(promote = true).expectTest {
-                assertThatThrownBy { expect("Not within triple quotes") }.isTripleQuotedBlockError()
+                assertThatThrownBy { expect("<CONTENT>") }.isTripleQuotedBlockError()
             }
 
         @Test
@@ -57,7 +57,7 @@ internal class ExpectTestsTest {
                         expect("Not within triple quotes")
                         expect(
                             """
-                            
+                            <CONTENT>
                         """
                                 .trimIndent()
                         )
@@ -67,7 +67,9 @@ internal class ExpectTestsTest {
 
         @Test
         fun `immediately closed string block`() =
-            ExpectTests(promote = true).expectTest { assertThatThrownBy { expect("""""") }.isTripleQuotedBlockError() }
+            ExpectTests(promote = true).expectTest {
+                assertThatThrownBy { expect("""<CONTENT>""") }.isTripleQuotedBlockError()
+            }
 
         @Test
         fun `triple quotes not on the next line after expect call`() =
@@ -76,6 +78,7 @@ internal class ExpectTestsTest {
                         expect( // Keep string block on the next line
                             // String block should be here
                             """
+                                    <CONTENT>
                                      """
                         )
                     }
@@ -87,8 +90,9 @@ internal class ExpectTestsTest {
             ExpectTests(promote = true).expectTest {
                 assertThatThrownBy {
                         // The next two statements are on consecutive lines
-                        expect("Not within triple quotes")
+                        expect("<CONTENT>")
                         """
+                        Just a string block
                     """
                             .let(::println)
                     }
@@ -100,7 +104,7 @@ internal class ExpectTestsTest {
             ExpectTests(promote = true).expectTest {
                 expect( // Comment
                     """
-
+                    
                 """
                 )
             }
@@ -112,6 +116,7 @@ internal class ExpectTestsTest {
                         fun alias(s: String) = expect(s)
                         alias(
                             """
+                                <CONTENT>
                            """
                         )
                     }
