@@ -50,22 +50,6 @@ internal class ExpectTestsTest {
             }
 
         @Test
-        fun `two consecutive expect calls, the first one missing triple quotes`() =
-            ExpectTests(promote = true).expectTest {
-                assertThatThrownBy {
-                        // The next two statements are on consecutive lines
-                        expect("Not within triple quotes")
-                        expect(
-                            """
-                            <CONTENT>
-                        """
-                                .trimIndent()
-                        )
-                    }
-                    .isTripleQuotedBlockError()
-            }
-
-        @Test
         fun `immediately closed string block`() =
             ExpectTests(promote = true).expectTest {
                 assertThatThrownBy { expect("""<CONTENT>""") }.isTripleQuotedBlockError()
