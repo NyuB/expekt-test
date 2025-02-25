@@ -27,7 +27,7 @@ jobs:
         with:
           python-version: '3.12.3'
           cache: 'pip'
-      - run: pip install -r requirements.txt
+      - run: pip install -r etc/requirements.txt
 
       - name: Enforce code formatting
         run: make fmt-check
