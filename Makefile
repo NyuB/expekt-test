@@ -8,7 +8,7 @@ default: fmt test
 
 test:
 	mvn test
-	$(PY) -m unittest release_changelog.py
+	$(PY) -m unittest etc/release_changelog.py
 
 test-promote:
 	mvn test -Dnyub.expekt.promote=true
@@ -26,5 +26,6 @@ fmt-check:
 	mvn spotless:check
 	$(PY) -m black --check release_changelog.py
 
-release_changelog.md: CHANGELOG.md release_changelog.py
-	$(PY) release_changelog.py CHANGELOG.md > release_changelog.md
+release_changelog.md: CHANGELOG.md etc/release_changelog.py
+	$(PY) etc/release_changelog.py CHANGELOG.md > release_changelog.md
+
