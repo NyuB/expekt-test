@@ -46,7 +46,6 @@ internal class ExpectTestsTest {
         @Test
         fun `when the expected string cannot be found, raise an error hinting toward missing triple-quotes`() =
             ExpectTests(promote = true).expectTest {
-                print("Not within triple quotes")
                 assertThatThrownBy { expect("Not within triple quotes") }.isTripleQuotedBlockError()
             }
 
