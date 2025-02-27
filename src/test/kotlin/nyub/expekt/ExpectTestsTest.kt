@@ -2,8 +2,10 @@ package nyub.expekt
 
 import org.assertj.core.api.AbstractThrowableAssert
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.fail
 
 internal class ExpectTestsTest {
     private fun expectTest(test: ExpectTests.ExpectTest.() -> Unit) =
@@ -40,6 +42,66 @@ internal class ExpectTestsTest {
                     .trimIndent()
             )
         }
+
+    /**
+     * To reproduce the setup that triggered the failure, remove the content of the expected blocks Before the
+     * synchronization fixes, on thread was reading the file while the other was writing to it
+     */
+    @Test
+    fun `multi-threading test`() {
+        val tas =
+            List(25) {
+                Thread {
+                    ExpectTests(promote = true).expectTest {
+                        repeat(5) { println("A") }
+                        expect(
+                            """
+                        A
+                        A
+                        A
+                        A
+                        A
+                """
+                                .trimIndent()
+                        )
+                    }
+                }
+            }
+        val tbs =
+            List(25) {
+                Thread {
+                    ExpectTests(promote = true).expectTest {
+                        repeat(5) { println("B") }
+                        expect(
+                            """
+                        B
+                        B
+                        B
+                        B
+                        B
+                """
+                                .trimIndent()
+                        )
+                    }
+                }
+            }
+
+        var threadFailed: Throwable? = null
+        val failTestIfErrorInThread = Thread.UncaughtExceptionHandler { _, e -> threadFailed = e }
+        tas.forEach { it.uncaughtExceptionHandler = failTestIfErrorInThread }
+        tbs.forEach { it.uncaughtExceptionHandler = failTestIfErrorInThread }
+
+        tas.zip(tbs).forEach { (a, b) ->
+            a.start()
+            b.start()
+        }
+        tas.zip(tbs).forEach { (a, b) ->
+            a.join()
+            b.join()
+        }
+
+        threadFailed?.let { fail(it) }
+    }
 
     @Nested
     inner class TripleQuotesSearchEdgeCasesTest {

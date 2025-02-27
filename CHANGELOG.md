@@ -4,6 +4,11 @@
 
 - Widen supported Java version, produce Java 15 bytecode instead of 17
 
+## Bugfixes
+
+- promotion failure when promoting content in parallel within the same file. 
+Promotion is now synchronized on the ExpectTests class.
+
 # 0.1.0
 Mostly bug fixes related to erroneous expect("...") calls without proper triple-quoted block formatting.
 

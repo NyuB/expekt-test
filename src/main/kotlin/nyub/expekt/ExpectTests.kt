@@ -154,27 +154,28 @@ data class ExpectTests(
         }
     }
 
-    private fun promote(actual: String) {
-        val callSite = callSite()
-        val callSiteFile =
-            resolveClassesFrom.resolve(callSite.className.replace(".", "/")).parent.resolve(callSite.fileName!!)
-        val callSiteLines = Files.readString(callSiteFile).split("\n")
+    private fun promote(actual: String) =
+        synchronized(ExpectTests::class.java) {
+            val callSite = callSite()
+            val callSiteFile =
+                resolveClassesFrom.resolve(callSite.className.replace(".", "/")).parent.resolve(callSite.fileName!!)
+            val callSiteLines = Files.readString(callSiteFile).split("\n")
 
-        val lineNumber = offsets.getAdjustedLine(callSiteFile, callSite.lineNumber)
-        val (stringStartIndex, stringEndIndex) =
-            findTripleQuotedStringStart(callSiteLines, lineNumber - 1)
-                ?: throw RuntimeException(
-                    "Could not find expected string at $callSiteFile:$lineNumber, maybe it is not within a triple-quoted block?"
-                )
+            val lineNumber = offsets.getAdjustedLine(callSiteFile, callSite.lineNumber)
+            val (stringStartIndex, stringEndIndex) =
+                findTripleQuotedStringStart(callSiteLines, lineNumber - 1)
+                    ?: throw RuntimeException(
+                        "Could not find expected string at $callSiteFile:$lineNumber, maybe it is not within a triple-quoted block?"
+                    )
 
-        val before = callSiteLines.subList(0, stringStartIndex + 1)
-        val between = callSiteLines.subList(stringStartIndex + 1, stringEndIndex)
-        val after = callSiteLines.subList(stringEndIndex, callSiteLines.size)
+            val before = callSiteLines.subList(0, stringStartIndex + 1)
+            val between = callSiteLines.subList(stringStartIndex + 1, stringEndIndex)
+            val after = callSiteLines.subList(stringEndIndex, callSiteLines.size)
 
-        val actualLines = actual.split("\n")
-        Files.writeString(callSiteFile, ExpectedLinesReplacement(before, between, after).replaceWith(actualLines))
-        offsets.record(callSiteFile, callSite.lineNumber, actualLines.size - between.size)
-    }
+            val actualLines = actual.split("\n")
+            Files.writeString(callSiteFile, ExpectedLinesReplacement(before, between, after).replaceWith(actualLines))
+            offsets.record(callSiteFile, callSite.lineNumber, actualLines.size - between.size)
+        }
 
     /**
      * Naive string search, requiring to write expect calls following a contrived pattern, could be improved with an
