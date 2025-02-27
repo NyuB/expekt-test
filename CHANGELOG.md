@@ -8,6 +8,7 @@
 
 - promotion failure when promoting content in parallel within the same file. 
 Promotion is now synchronized on the ExpectTests class.
+- promotion failure when `expect(` was written within the expected string block on the same line as the actual `expect(` call.
 
 # 0.1.0
 Mostly bug fixes related to erroneous expect("...") calls without proper triple-quoted block formatting.

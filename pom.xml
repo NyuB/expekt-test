@@ -153,6 +153,10 @@
             <includes>
               <include>src/**/*.kt</include>
             </includes>
+            <excludes>
+              <!-- Keep this file away from the formatted files since it tests line-sensitive edge cases -->
+              <exclude>src/test/kotlin/nyub/expekt/TripleQuotesSearchEdgeCasesTest.kt</exclude>
+            </excludes>
             <ktfmt>
               <style>KOTLINLANG</style>
               <maxWidth>120</maxWidth>
