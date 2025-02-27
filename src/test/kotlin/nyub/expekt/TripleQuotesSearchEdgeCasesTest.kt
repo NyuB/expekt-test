@@ -77,7 +77,7 @@ internal class TripleQuotesSearchEdgeCasesTest {
                 expect("""expect(
                            """
                 )
-                // The string block below was confused and interleaved with the end of the above block
+                // Before the fix, string block below was confused and interleaved with the end of the above block
                 """
                         OOPS
                     """
