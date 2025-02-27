@@ -90,7 +90,6 @@ internal class TripleQuotesSearchEdgeCasesTest {
     private fun AbstractThrowableAssert<*, out Throwable>.isTripleQuotedBlockError():
         AbstractThrowableAssert<*, *>? =
         this.isInstanceOf(RuntimeException::class.java)
-            .hasMessageContaining("Could not find expected string")
+            .hasMessageContaining("Could not find expected triple-quoted string block")
             .hasMessageContaining("${this@TripleQuotesSearchEdgeCasesTest::class.simpleName}.kt")
-            .hasMessageContaining("triple-quoted block")
 }

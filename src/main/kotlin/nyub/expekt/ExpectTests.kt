@@ -163,10 +163,11 @@ data class ExpectTests(
 
             val lineNumber = offsets.getAdjustedLine(callSiteFile, callSite.lineNumber)
             val (stringStartIndex, stringEndIndex) =
-                findTripleQuotedStringStart(callSiteLines, lineNumber - 1)
-                    ?: throw RuntimeException(
-                        "Could not find expected string at $callSiteFile:$lineNumber, maybe it is not within a triple-quoted block?"
+                findTripleQuotedStringStart(callSiteLines, lineNumber - 1).getOrElse { e ->
+                    throw RuntimeException(
+                        "Could not find expected triple-quoted string block at $callSiteFile:$lineNumber: ${e.message}"
                     )
+                }
 
             val before = callSiteLines.subList(0, stringStartIndex + 1)
             val between = callSiteLines.subList(stringStartIndex + 1, stringEndIndex)
@@ -201,14 +202,16 @@ data class ExpectTests(
      * @return the line index of the opening triple-quote and the line index of the closing triple-quote, searching from
      *   [expectCallSite] line index. `null` if one of the two markers could not be found
      */
-    private fun findTripleQuotedStringStart(lines: List<String>, expectCallSite: Int): Pair<Int, Int>? {
-        if (expectCallSite >= lines.size) return null
+    private fun findTripleQuotedStringStart(lines: List<String>, expectCallSite: Int): Result<Pair<Int, Int>> {
+        if (expectCallSite >= lines.size)
+            return Result.failure(IllegalStateException("Provided call site line is greater than file's lines count"))
         val callSiteLine = lines[expectCallSite].trimComment()
 
         val containsExpect = callSiteLine.indexOf(expectCall)
-        if (containsExpect == -1) return null
+        if (containsExpect == -1) return Result.failure(IllegalStateException("Could not find 'expect(' call"))
         val containsAnotherExpect = callSiteLine.indexOf(expectCall, startIndex = containsExpect + 1)
-        if (containsAnotherExpect != -1) return null
+        if (containsAnotherExpect != -1)
+            return Result.failure(IllegalStateException("Found two 'expect(' sequences on the same line"))
 
         val startIndex =
             // String block on the same line as expect(
@@ -220,14 +223,14 @@ data class ExpectTests(
                     lines[expectCallSite + 1].trim() == tripleQuotes
             )
                 expectCallSite + 1
-            else return null
+            else return Result.failure(IllegalStateException("Could not find opening triple-quotes"))
 
         var endIndex = startIndex + 1
         while (endIndex < lines.size) {
-            if (lines[endIndex].contains(tripleQuotes)) return startIndex to endIndex
+            if (lines[endIndex].contains(tripleQuotes)) return Result.success(startIndex to endIndex)
             endIndex++
         }
-        return null
+        return Result.failure(IllegalStateException("Could not find closing triple-quotes"))
     }
 
     private class ExpectedLinesReplacement(val before: List<String>, between: List<String>, val after: List<String>) {
