@@ -231,30 +231,6 @@ data class ExpectTests(
         return Result.success(containsExpectAt)
     }
 
-    private class ExpectedLinesReplacement(val before: List<String>, between: List<String>, val after: List<String>) {
-        fun replaceWith(actualLines: List<String>) =
-            (before + actualLines.map { commonPrefix + it } + after).joinToString(separator = "\n")
-
-        private val commonPrefix: String = sharedIndentation(between)
-
-        private fun sharedIndentation(between: List<String>): String {
-            if (between.isEmpty()) return ""
-            var minPrefix: String? = null
-            between.forEach {
-                if (minPrefix == null || !it.startsWith(minPrefix!!)) {
-                    minPrefix = spacePrefix(it)
-                }
-            }
-            return minPrefix!!
-        }
-
-        private fun spacePrefix(s: String): String {
-            var space = 0
-            while (space < s.length && s[space].isWhitespace()) space++
-            return s.substring(0, space)
-        }
-    }
-
     private fun callSite(): StackTraceElement {
         val currentStack = Thread.currentThread().stackTrace
         val (thisMethodIndex, _) =
@@ -368,5 +344,33 @@ private class ExpectContentScanner(val lines: List<String>, startLine: Int, star
             }
             position = position.incrementLine()
         }
+    }
+}
+
+private class ExpectedLinesReplacement(
+    private val before: List<String>,
+    between: List<String>,
+    private val after: List<String>,
+) {
+    fun replaceWith(actualLines: List<String>) =
+        (before + actualLines.map { commonPrefix + it } + after).joinToString(separator = "\n")
+
+    private val commonPrefix: String = sharedIndentation(between)
+
+    private fun sharedIndentation(between: List<String>): String {
+        if (between.isEmpty()) return ""
+        var minPrefix: String? = null
+        between.forEach {
+            if (minPrefix == null || !it.startsWith(minPrefix!!)) {
+                minPrefix = spacePrefix(it)
+            }
+        }
+        return minPrefix!!
+    }
+
+    private fun spacePrefix(s: String): String {
+        var space = 0
+        while (space < s.length && s[space].isWhitespace()) space++
+        return s.substring(0, space)
     }
 }
