@@ -81,6 +81,7 @@ This imposes some formatting rule regarding the "expect" call.
 2) the expected content should be in a triple-quoted-string block
 3) the opening triple-quotes should be the next token after the `expect(` call (not nested in parentheses or aliased)
 4) the closing triple-quotes should be on a different line than the opening triple-quotes
+5) the expected content should not use [Kotlin string interpolation](https://kotlinlang.org/docs/strings.html#string-templates)
 
 #### OK:
 
@@ -136,5 +137,14 @@ alias(
 ```
 
 - (because expect is aliased, so the search starts from the actual call site on the first line)
+
+```kotlin
+val content = "<CONTENT>"
+expect("""
+$content
+""")
+```
+
+- (because the expected string block uses string interpolation)
 
 See [ExpectTestsTest.ExpectCallConstraintsTest](src/test/kotlin/nyub/expekt/ExpectCallConstraintsTest.kt) for more invalid examples

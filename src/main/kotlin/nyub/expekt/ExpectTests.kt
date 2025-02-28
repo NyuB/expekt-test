@@ -193,19 +193,21 @@ data class ExpectTests(
     private fun findTripleQuotedStringStart(lines: List<String>, expectLine: Int): Result<Pair<Int, Int>> {
         val expectColumn =
             locateExpectCallColumn(lines, expectLine).getOrElse {
-                return Result.failure(it)
+                return fail(it)
             }
 
         val scanner = ExpectContentScanner(lines, expectLine, expectColumn)
         scanner.identifier("expect(").getOrElse {
-            return Result.failure(it)
+            return fail(it)
         }
         scanner.skipNonSignificantCharacters()
         val startIndex = scanner.position.line
         scanner.identifier(tripleQuotes).getOrElse {
             return fail("could not find opening quotes")
         }
-        scanner.stringBlockContent()
+        scanner.stringBlockContent().getOrElse {
+            return fail(it)
+        }
         val endIndex = scanner.position.line
         scanner.identifier(tripleQuotes).getOrElse {
             return fail("could not find closing quotes")
@@ -239,6 +241,8 @@ private const val tripleQuotes = "\"\"\""
 private const val expectCall = "expect("
 
 private fun fail(message: String): Result<Nothing> = Result.failure(IllegalStateException(message))
+
+private fun fail(throwable: Throwable): Result<Nothing> = Result.failure(throwable)
 
 /**
  * Globally records line additions or removal to keep line counts up-to-date if there are multiple promotions to the
@@ -317,14 +321,18 @@ private class ExpectContentScanner(val lines: List<String>, startLine: Int, star
         return Result.success(Unit)
     }
 
-    fun stringBlockContent() {
+    fun stringBlockContent(): Result<Unit> {
         while (position.line < lines.size) {
             while (position.column < currentLine.length) {
-                if (currentCharacter == '"' && nextCharacter(1) == '"' && nextCharacter(2) == '"') return
+                if (currentCharacter == '"' && nextCharacter(1) == '"' && nextCharacter(2) == '"')
+                    return Result.success(Unit)
+                if (currentCharacter == '$' && nextCharacter(1).isInterpolatedCharacter())
+                    return fail("string interpolation is not allowed within expected string block")
                 position = position.incrementColumn()
             }
             position = position.incrementLine()
         }
+        return fail("unterminated string content")
     }
 
     fun skipNonSignificantCharacters() {
@@ -338,6 +346,11 @@ private class ExpectContentScanner(val lines: List<String>, startLine: Int, star
             }
             position = position.incrementLine()
         }
+    }
+
+    private fun Char?.isInterpolatedCharacter(): Boolean {
+        if (this == null) return false
+        return this.isLetter() || this == '_' || this == '`' || this == '{'
     }
 }
 

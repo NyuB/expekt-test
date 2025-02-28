@@ -83,6 +83,32 @@ internal class ExpectCallConstraintsTest {
         }
     }
 
+    @Test
+    fun `interpolation in string block`() {
+        ExpectTests(promote = true).expectTest {
+            val content = "$<CONTENT>"
+            print(content)
+            assertThatThrownBy {
+                expect(
+                    """
+                            $content
+                           """
+                )
+            }
+                .isExpectCallConstraintError()
+                .hasMessageContaining("string interpolation is not allowed within expected string block")
+            assertThatThrownBy {
+                expect(
+                    """
+                            ${content}
+                           """
+                )
+            }
+                .isExpectCallConstraintError()
+                .hasMessageContaining("string interpolation is not allowed within expected string block")
+        }
+    }
+
     private fun AbstractThrowableAssert<*, out Throwable>.isExpectCallConstraintError():
         AbstractThrowableAssert<*, out Throwable> =
         this.isInstanceOf(RuntimeException::class.java)
