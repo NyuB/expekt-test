@@ -79,9 +79,7 @@ This imposes some formatting rule regarding the "expect" call.
 
 1) the `expect(` call should be written in place, not aliased
 2) the expected content should be in a triple-quoted-string block
-3) the starting triple-quotes should either be:
-    1) immediately after the `expect(` call, at the end of the line
-    2) on the line just below the `expect(` call, alone on this line
+3) the starting triple-quotes should be the next token after the `expect(` call (not nested in parentheses or aliased))
 
 #### OK:
 
@@ -115,28 +113,12 @@ expect("<CONTENT>")
 - (because the expected content is not within a triple-quoted block)
 
 ```kotlin
-expect("""<CONTENT>
-""")
-```
-
-- (because the starting quotes are not at the end of the line)
-
-```kotlin
 expect(f("""
 <CONTENT>
 """))
 ```
 
-- (because the starting quotes are not immediately after the `expect(` call)
-
-```kotlin
-expect(
-f("""
-<CONTENT>
-"""))
-```
-
-- (because the starting quotes are not alone on their line)
+- (because the starting quotes are not the next token after the `expect(` call)
 
 ```kotlin
 fun alias(s: String) = expect(s)

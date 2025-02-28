@@ -211,12 +211,6 @@ data class ExpectTests(
             return fail("could not find closing quotes")
         }
         if (endIndex <= startIndex) return fail("closing quotes must be on a different line than opening ones")
-        if (startIndex > expectLine + 1)
-            return Result.failure(
-                IllegalStateException(
-                    "opening quotes must be on the same line as the expect( call line or on the line immediately below"
-                )
-            )
         return Result.success(startIndex to endIndex)
     }
 

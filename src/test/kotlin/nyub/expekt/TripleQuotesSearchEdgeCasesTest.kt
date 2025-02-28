@@ -24,17 +24,15 @@ internal class TripleQuotesSearchEdgeCasesTest {
     @Test
     fun `triple quotes not on the next line after expect call`() =
         ExpectTests(promote = true).expectTest {
-            assertThatThrownBy {
-                expect( // Keep string block on the next line
-                    // String block should be here
-                    """
-                                    
+            print("<CONTENT>")
+            expect( // Keep string block on the next line
+                // Another line
+                """
+                                    <CONTENT>
                                      """
-                )
-            }
-                .isTripleQuotedBlockError()
-                .hasMessageContaining("opening quotes must be on the same line as the expect( call line or on the line immediately below")
+            )
         }
+
 
     @Test
     fun `standalone string block after erroneous call to expect`() =

@@ -3,7 +3,8 @@
 ## Features
 
 - Widen supported Java version, produce Java 15 bytecode instead of 17
-
+- Improved error messages precision for invalid expected string blocks
+- Removed constraint on expected string block starting line, it can now be anywhere after the `expect(` call
 ## Bugfixes
 
 - promotion failure when promoting content in parallel within the same file. 
