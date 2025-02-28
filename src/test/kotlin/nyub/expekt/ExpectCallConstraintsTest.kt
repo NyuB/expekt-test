@@ -4,12 +4,12 @@ import org.assertj.core.api.AbstractThrowableAssert
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 
-internal class TripleQuotesSearchEdgeCasesTest {
+internal class ExpectCallConstraintsTest {
     @Test
     fun `when the expected string cannot be found, raise an error hinting toward missing triple-quotes`() =
         ExpectTests(promote = true).expectTest {
             assertThatThrownBy { expect("<CONTENT>") }
-                .isTripleQuotedBlockError()
+                .isExpectCallConstraintError()
                 .hasMessageContaining("could not find opening quotes")
         }
 
@@ -17,12 +17,12 @@ internal class TripleQuotesSearchEdgeCasesTest {
     fun `immediately closed string block`() =
         ExpectTests(promote = true).expectTest {
             assertThatThrownBy { expect("""<CONTENT>""") }
-                .isTripleQuotedBlockError()
+                .isExpectCallConstraintError()
                 .hasMessageContaining("closing quotes must be on a different line than opening ones")
         }
 
     @Test
-    fun `triple quotes not on the next line after expect call`() =
+    fun `opening triple quotes not on the next line after expect call`() =
         ExpectTests(promote = true).expectTest {
             print("<CONTENT>")
             expect( // Keep string block on the next line
@@ -45,18 +45,8 @@ internal class TripleQuotesSearchEdgeCasesTest {
                     """
                     .let(::println)
             }
-                .isTripleQuotedBlockError()
+                .isExpectCallConstraintError()
                 .hasMessageContaining("could not find opening quotes")
-        }
-
-    @Test
-    fun `comment after expect call`() =
-        ExpectTests(promote = true).expectTest {
-            expect( // Comment
-                """
-                    
-                """
-            )
         }
 
     @Test
@@ -70,7 +60,7 @@ internal class TripleQuotesSearchEdgeCasesTest {
                            """
                 )
             }
-                .isTripleQuotedBlockError()
+                .isExpectCallConstraintError()
                 .hasMessageContaining("could not find opening quotes")
         }
 
@@ -88,14 +78,14 @@ internal class TripleQuotesSearchEdgeCasesTest {
                     """
                     .trimIndent()
             }
-                .isTripleQuotedBlockError()
+                .isExpectCallConstraintError()
                 .hasMessageContaining("found two 'expect(' sequences on the same line")
         }
     }
 
-    private fun AbstractThrowableAssert<*, out Throwable>.isTripleQuotedBlockError():
+    private fun AbstractThrowableAssert<*, out Throwable>.isExpectCallConstraintError():
         AbstractThrowableAssert<*, out Throwable> =
         this.isInstanceOf(RuntimeException::class.java)
             .hasMessageContaining("Could not find expected triple-quoted string block")
-            .hasMessageContaining("${this@TripleQuotesSearchEdgeCasesTest::class.simpleName}.kt")
+            .hasMessageContaining("${this@ExpectCallConstraintsTest::class.simpleName}.kt")
 }

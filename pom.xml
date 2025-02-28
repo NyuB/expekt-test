@@ -155,7 +155,7 @@
             </includes>
             <excludes>
               <!-- Keep this file away from the formatted files since it tests line-sensitive edge cases -->
-              <exclude>src/test/kotlin/nyub/expekt/TripleQuotesSearchEdgeCasesTest.kt</exclude>
+              <exclude>src/test/kotlin/nyub/expekt/ExpectCallConstraintsTest.kt</exclude>
             </excludes>
             <ktfmt>
               <style>KOTLINLANG</style>

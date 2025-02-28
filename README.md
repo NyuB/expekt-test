@@ -79,7 +79,7 @@ This imposes some formatting rule regarding the "expect" call.
 
 1) the `expect(` call should be written in place, not aliased
 2) the expected content should be in a triple-quoted-string block
-3) the starting triple-quotes should be the next token after the `expect(` call (not nested in parentheses or aliased))
+3) the opening triple-quotes should be the next token after the `expect(` call (not nested in parentheses or aliased))
 
 #### OK:
 
@@ -118,7 +118,7 @@ expect(f("""
 """))
 ```
 
-- (because the starting quotes are not the next token after the `expect(` call)
+- (because the opening quotes are not the next token after the `expect(` call)
 
 ```kotlin
 fun alias(s: String) = expect(s)
@@ -131,4 +131,4 @@ alias(
 
 - (because expect is aliased, so the search starts from the actual call site on the first line)
 
-See [ExpectTestsTest.TripleQuotesSearchEdgeCasesTest](src/test/kotlin/nyub/expekt/ExpectTestsTest.kt) for more invalid examples
+See [ExpectTestsTest.ExpectCallConstraintsTest](src/test/kotlin/nyub/expekt/ExpectCallConstraintsTest.kt) for more invalid examples
