@@ -117,7 +117,7 @@ data class ExpectTests(
             }
 
         /**
-         * Asserts that `this`.toString() matches the [expected] content, or update the [expected] content in place if
+         * Asserts that `this.toString()` matches the [expected] content, or update the [expected] content in place if
          * [creator] is in promote mode.
          */
         fun Any.expect(expected: String) {
@@ -126,6 +126,8 @@ data class ExpectTests(
         }
 
         /**
+         * Ensure [output] is empty
+         *
          * @throws AssertionError if there is still any unhandled output in [output]
          * @see expect
          */
