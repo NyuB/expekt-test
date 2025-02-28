@@ -179,9 +179,6 @@ data class ExpectTests(
         }
 
     /**
-     * Naive string search, requiring to write expect calls following a contrived pattern, could be improved with an
-     * actual Kotlin lexing
-     *
      * Searches for
      *
      * ```kotlin
@@ -190,55 +187,48 @@ data class ExpectTests(
      * """)
      * ```
      *
-     * or
-     *
-     * ```kotlin
-     * expect(
-     * """
-     * <CONTENT>
-     * """)
-     * ```
-     *
      * @return the line index of the opening triple-quote and the line index of the closing triple-quote, searching from
-     *   [expectCallSite] line index. `null` if one of the two markers could not be found
+     *   [expectLine] line index, or fails if one of the two markers could not be found or the string block is invalid
      */
-    private fun findTripleQuotedStringStart(lines: List<String>, expectCallSite: Int): Result<Pair<Int, Int>> {
-        val callSiteLine =
-            locateExpectCall(lines, expectCallSite).getOrElse {
+    private fun findTripleQuotedStringStart(lines: List<String>, expectLine: Int): Result<Pair<Int, Int>> {
+        val expectColumn =
+            locateExpectCallColumn(lines, expectLine).getOrElse {
                 return Result.failure(it)
             }
 
-        val startIndex =
-            // String block on the same line as expect(
-            if (callSiteLine.trimEnd().endsWith("$expectCall$tripleQuotes")) expectCallSite
-            // String block on the line immediately after expect(
-            else if (
-                callSiteLine.trim().endsWith("expect(") &&
-                    expectCallSite < lines.size - 1 &&
-                    lines[expectCallSite + 1].trim() == tripleQuotes
-            )
-                expectCallSite + 1
-            else return Result.failure(IllegalStateException("Could not find opening triple-quotes"))
-
-        var endIndex = startIndex + 1
-        while (endIndex < lines.size) {
-            if (lines[endIndex].contains(tripleQuotes)) return Result.success(startIndex to endIndex)
-            endIndex++
+        val scanner = ExpectContentScanner(lines, expectLine, expectColumn)
+        scanner.identifier("expect(").getOrElse {
+            return Result.failure(it)
         }
-        return Result.failure(IllegalStateException("Could not find closing triple-quotes"))
+        scanner.skipNonSignificantCharacters()
+        val startIndex = scanner.position.line
+        scanner.identifier(tripleQuotes).getOrElse {
+            return fail("could not find opening quotes")
+        }
+        scanner.stringBlockContent()
+        val endIndex = scanner.position.line
+        scanner.identifier(tripleQuotes).getOrElse {
+            return fail("could not find closing quotes")
+        }
+        if (endIndex <= startIndex) return fail("closing quotes must be on a different line than opening ones")
+        if (startIndex > expectLine + 1)
+            return Result.failure(
+                IllegalStateException(
+                    "opening quotes must be on the same line as the expect( call line or on the line immediately below"
+                )
+            )
+        return Result.success(startIndex to endIndex)
     }
 
-    private fun locateExpectCall(lines: List<String>, expectCallSite: Int): Result<String> {
-        if (expectCallSite >= lines.size)
-            return Result.failure(IllegalStateException("Provided call site line is greater than file's lines count"))
-        val callLine = lines[expectCallSite].trimComment()
+    private fun locateExpectCallColumn(lines: List<String>, expectCallSite: Int): Result<Int> {
+        if (expectCallSite >= lines.size) return fail("provided call site line is greater than file's lines count")
+        val callLine = lines[expectCallSite]
 
-        val containsExpect = callLine.indexOf(expectCall)
-        if (containsExpect == -1) return Result.failure(IllegalStateException("Could not find 'expect(' call"))
-        val containsAnotherExpect = callLine.indexOf(expectCall, startIndex = containsExpect + 1)
-        if (containsAnotherExpect != -1)
-            return Result.failure(IllegalStateException("Found two 'expect(' sequences on the same line"))
-        return Result.success(callLine)
+        val containsExpectAt = callLine.indexOf(expectCall)
+        if (containsExpectAt == -1) return fail("could not find 'expect(' call")
+        val containsAnotherExpect = callLine.indexOf(expectCall, startIndex = containsExpectAt + 1)
+        if (containsAnotherExpect != -1) return fail("found two 'expect(' sequences on the same line")
+        return Result.success(containsExpectAt)
     }
 
     private class ExpectedLinesReplacement(val before: List<String>, between: List<String>, val after: List<String>) {
@@ -278,11 +268,7 @@ data class ExpectTests(
 private const val tripleQuotes = "\"\"\""
 private const val expectCall = "expect("
 
-private fun String.trimComment(): String {
-    val commentIndex = this.indexOf("//")
-    if (commentIndex < 0) return this
-    return this.substring(0, commentIndex)
-}
+private fun fail(message: String): Result<Nothing> = Result.failure(IllegalStateException(message))
 
 /**
  * Globally records line additions or removal to keep line counts up-to-date if there are multiple promotions to the
@@ -326,4 +312,61 @@ private class LineOffsets {
     }
 
     private class Offset(val originalLine: Int, val offset: Int)
+}
+
+private class ExpectContentScanner(val lines: List<String>, startLine: Int, startColumn: Int) {
+    class Position(val line: Int, val column: Int) {
+        fun incrementLine(): Position = Position(this.line + 1, 0)
+
+        fun incrementColumn(): Position = Position(this.line, this.column + 1)
+
+        override fun toString(): String {
+            return "${line + 1}:${column + 1}"
+        }
+    }
+
+    var position: Position = Position(startLine, startColumn)
+    val currentLine: String
+        get() = lines[position.line]
+
+    val currentCharacter: Char
+        get() = currentLine[position.column]
+
+    fun nextCharacter(ahead: Int): Char? =
+        if (position.column + ahead >= currentLine.length) null else currentLine[position.column + ahead]
+
+    fun identifier(id: String): Result<Unit> {
+        if (position.line >= lines.size) return fail("Reached EOF")
+        if (currentLine.length - position.column < id.length) return fail("Expected to find $id at $position")
+        var index = 0
+        while (index < id.length) {
+            if (currentCharacter != id[index]) return fail("Expected to find $id at $position")
+            position = position.incrementColumn()
+            index++
+        }
+        return Result.success(Unit)
+    }
+
+    fun stringBlockContent() {
+        while (position.line < lines.size) {
+            while (position.column < currentLine.length) {
+                if (currentCharacter == '"' && nextCharacter(1) == '"' && nextCharacter(2) == '"') return
+                position = position.incrementColumn()
+            }
+            position = position.incrementLine()
+        }
+    }
+
+    fun skipNonSignificantCharacters() {
+        while (position.line < lines.size) {
+            while (position.column < currentLine.length) {
+                if (currentCharacter == '/' && nextCharacter(1) == '/') {
+                    break
+                }
+                if (!currentCharacter.isWhitespace()) return
+                position = position.incrementColumn()
+            }
+            position = position.incrementLine()
+        }
+    }
 }

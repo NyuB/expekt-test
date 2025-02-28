@@ -8,13 +8,17 @@ internal class TripleQuotesSearchEdgeCasesTest {
     @Test
     fun `when the expected string cannot be found, raise an error hinting toward missing triple-quotes`() =
         ExpectTests(promote = true).expectTest {
-            assertThatThrownBy { expect("<CONTENT>") }.isTripleQuotedBlockError()
+            assertThatThrownBy { expect("<CONTENT>") }
+                .isTripleQuotedBlockError()
+                .hasMessageContaining("could not find opening quotes")
         }
 
     @Test
     fun `immediately closed string block`() =
         ExpectTests(promote = true).expectTest {
-            assertThatThrownBy { expect("""<CONTENT>""") }.isTripleQuotedBlockError()
+            assertThatThrownBy { expect("""<CONTENT>""") }
+                .isTripleQuotedBlockError()
+                .hasMessageContaining("closing quotes must be on a different line than opening ones")
         }
 
     @Test
@@ -24,11 +28,12 @@ internal class TripleQuotesSearchEdgeCasesTest {
                 expect( // Keep string block on the next line
                     // String block should be here
                     """
-                                    <CONTENT>
+                                    
                                      """
                 )
             }
                 .isTripleQuotedBlockError()
+                .hasMessageContaining("opening quotes must be on the same line as the expect( call line or on the line immediately below")
         }
 
     @Test
@@ -43,6 +48,7 @@ internal class TripleQuotesSearchEdgeCasesTest {
                     .let(::println)
             }
                 .isTripleQuotedBlockError()
+                .hasMessageContaining("could not find opening quotes")
         }
 
     @Test
@@ -67,6 +73,7 @@ internal class TripleQuotesSearchEdgeCasesTest {
                 )
             }
                 .isTripleQuotedBlockError()
+                .hasMessageContaining("could not find opening quotes")
         }
 
     @Test
@@ -84,11 +91,12 @@ internal class TripleQuotesSearchEdgeCasesTest {
                     .trimIndent()
             }
                 .isTripleQuotedBlockError()
+                .hasMessageContaining("found two 'expect(' sequences on the same line")
         }
     }
 
     private fun AbstractThrowableAssert<*, out Throwable>.isTripleQuotedBlockError():
-        AbstractThrowableAssert<*, *>? =
+        AbstractThrowableAssert<*, out Throwable> =
         this.isInstanceOf(RuntimeException::class.java)
             .hasMessageContaining("Could not find expected triple-quoted string block")
             .hasMessageContaining("${this@TripleQuotesSearchEdgeCasesTest::class.simpleName}.kt")
