@@ -201,17 +201,21 @@ data class ExpectTests(
             return fail(it)
         }
         scanner.skipNonSignificantCharacters()
+
         val startIndex = scanner.position.line
         scanner.identifier(tripleQuotes).getOrElse {
-            return fail("could not find opening quotes")
+            return fail(IllegalStateException("could not find opening quotes", it))
         }
+
         scanner.stringBlockContent().getOrElse {
             return fail(it)
         }
+
         val endIndex = scanner.position.line
         scanner.identifier(tripleQuotes).getOrElse {
-            return fail("could not find closing quotes")
+            return fail(IllegalStateException("could not find closing quotes", it))
         }
+
         if (endIndex <= startIndex) return fail("closing quotes must be on a different line than opening ones")
         return Result.success(startIndex to endIndex)
     }
