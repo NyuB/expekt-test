@@ -203,19 +203,14 @@ data class ExpectTests(
      *   [expectCallSite] line index. `null` if one of the two markers could not be found
      */
     private fun findTripleQuotedStringStart(lines: List<String>, expectCallSite: Int): Result<Pair<Int, Int>> {
-        if (expectCallSite >= lines.size)
-            return Result.failure(IllegalStateException("Provided call site line is greater than file's lines count"))
-        val callSiteLine = lines[expectCallSite].trimComment()
-
-        val containsExpect = callSiteLine.indexOf(expectCall)
-        if (containsExpect == -1) return Result.failure(IllegalStateException("Could not find 'expect(' call"))
-        val containsAnotherExpect = callSiteLine.indexOf(expectCall, startIndex = containsExpect + 1)
-        if (containsAnotherExpect != -1)
-            return Result.failure(IllegalStateException("Found two 'expect(' sequences on the same line"))
+        val callSiteLine =
+            locateExpectCall(lines, expectCallSite).getOrElse {
+                return Result.failure(it)
+            }
 
         val startIndex =
             // String block on the same line as expect(
-            if (callSiteLine.trimEnd().endsWith("expect($tripleQuotes")) expectCallSite
+            if (callSiteLine.trimEnd().endsWith("$expectCall$tripleQuotes")) expectCallSite
             // String block on the line immediately after expect(
             else if (
                 callSiteLine.trim().endsWith("expect(") &&
@@ -231,6 +226,19 @@ data class ExpectTests(
             endIndex++
         }
         return Result.failure(IllegalStateException("Could not find closing triple-quotes"))
+    }
+
+    private fun locateExpectCall(lines: List<String>, expectCallSite: Int): Result<String> {
+        if (expectCallSite >= lines.size)
+            return Result.failure(IllegalStateException("Provided call site line is greater than file's lines count"))
+        val callLine = lines[expectCallSite].trimComment()
+
+        val containsExpect = callLine.indexOf(expectCall)
+        if (containsExpect == -1) return Result.failure(IllegalStateException("Could not find 'expect(' call"))
+        val containsAnotherExpect = callLine.indexOf(expectCall, startIndex = containsExpect + 1)
+        if (containsAnotherExpect != -1)
+            return Result.failure(IllegalStateException("Found two 'expect(' sequences on the same line"))
+        return Result.success(callLine)
     }
 
     private class ExpectedLinesReplacement(val before: List<String>, between: List<String>, val after: List<String>) {
