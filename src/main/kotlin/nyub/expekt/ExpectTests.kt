@@ -198,7 +198,7 @@ data class ExpectTests(
                 return fail(it)
             }
 
-        val scanner = ExpectContentScanner(lines, expectLine, expectColumn)
+        val scanner = ExpectCallScanner(lines, expectLine, expectColumn)
         scanner.identifier("expect(").getOrElse {
             return fail(it)
         }
@@ -294,7 +294,7 @@ private class LineOffsets {
     private class Offset(val originalLine: Int, val offset: Int)
 }
 
-private class ExpectContentScanner(val lines: List<String>, startLine: Int, startColumn: Int) {
+private class ExpectCallScanner(val lines: List<String>, startLine: Int, startColumn: Int) {
     class Position(val line: Int, val column: Int) {
         fun incrementLine(): Position = Position(this.line + 1, 0)
 
@@ -306,11 +306,7 @@ private class ExpectContentScanner(val lines: List<String>, startLine: Int, star
     }
 
     var position: Position = Position(startLine, startColumn)
-    val currentLine: String
-        get() = lines[position.line]
-
-    val currentCharacter: Char
-        get() = currentLine[position.column]
+        private set
 
     fun nextCharacter(ahead: Int): Char? =
         if (position.column + ahead >= currentLine.length) null else currentLine[position.column + ahead]
@@ -353,6 +349,12 @@ private class ExpectContentScanner(val lines: List<String>, startLine: Int, star
             position = position.incrementLine()
         }
     }
+
+    private val currentLine: String
+        get() = lines[position.line]
+
+    private val currentCharacter: Char
+        get() = currentLine[position.column]
 
     private fun Char?.isInterpolatedCharacter(): Boolean {
         if (this == null) return false
