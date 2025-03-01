@@ -158,7 +158,7 @@ data class ExpectTests(
 
     private fun promote(actual: String) =
         synchronized(ExpectTests::class.java) {
-            val callSite = callSite()
+            val callSite = expectCallSite()
             val callSiteFile =
                 resolveClassesFrom.resolve(callSite.className.replace(".", "/")).parent.resolve(callSite.fileName!!)
             val callSiteLines = Files.readString(callSiteFile).split("\n")
@@ -176,7 +176,8 @@ data class ExpectTests(
             val after = callSiteLines.subList(stringEndIndex, callSiteLines.size)
 
             val actualLines = actual.split("\n")
-            Files.writeString(callSiteFile, ExpectedLinesReplacement(before, between, after).replaceWith(actualLines))
+            val replacement = ExpectedLinesReplacement(before, between, after).replaceWith(actualLines)
+            Files.writeString(callSiteFile, replacement)
             offsets.record(callSiteFile, callSite.lineNumber, actualLines.size - between.size)
         }
 
@@ -222,9 +223,9 @@ data class ExpectTests(
         return Result.success(startIndex to endIndex)
     }
 
-    private fun locateExpectCallColumn(lines: List<String>, expectCallSite: Int): Result<Int> {
-        if (expectCallSite >= lines.size) return fail("provided call site line is greater than file's lines count")
-        val callLine = lines[expectCallSite]
+    private fun locateExpectCallColumn(lines: List<String>, expectCallLineIndex: Int): Result<Int> {
+        if (expectCallLineIndex >= lines.size) return fail("provided call site line is greater than file's lines count")
+        val callLine = lines[expectCallLineIndex]
 
         val containsExpectAt = callLine.indexOf(expectCall)
         if (containsExpectAt == -1) return fail("could not find 'expect(' call")
@@ -233,7 +234,7 @@ data class ExpectTests(
         return Result.success(containsExpectAt)
     }
 
-    private fun callSite(): StackTraceElement {
+    private fun expectCallSite(): StackTraceElement {
         val currentStack = Thread.currentThread().stackTrace
         val (thisMethodIndex, _) =
             currentStack.withIndex().first { (_, e) ->
