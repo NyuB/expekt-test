@@ -1,5 +1,4 @@
-# Current developments
-
+# 1.0.0
 ## Features
 
 - Widen supported Java version, produce Java 15 bytecode instead of 17
