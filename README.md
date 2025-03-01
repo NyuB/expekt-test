@@ -75,13 +75,16 @@ For non-junit codebases, the Kotlin scope functions are usable on the Java side,
 
 Expekt detects string blocks to check and promote based on a few heuristics.
 
-This imposes some formatting rule regarding the "expect" call.
+This imposes some formatting rule regarding the `expect(` call.
 
-1) the `expect(` call should be written in place, not aliased
-2) the expected content should be in a triple-quoted-string block
+1) the `expect(` call should be written fully in place
+   - not aliased
+   - without spacing between the function name and the opening parenthesis
+2) the expected content
+   - should be in a triple-quoted-string block
+   - should not use [Kotlin string interpolation](https://kotlinlang.org/docs/strings.html#string-templates)
 3) the opening triple-quotes should be the next token after the `expect(` call (not nested in parentheses or aliased)
 4) the closing triple-quotes should be on a different line than the opening triple-quotes
-5) the expected content should not use [Kotlin string interpolation](https://kotlinlang.org/docs/strings.html#string-templates)
 
 #### OK:
 
