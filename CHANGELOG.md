@@ -1,3 +1,7 @@
+# Current developments
+## Features
+- Allow arbitrary spaces between expect and opening parenthesis
+
 # 1.0.0
 ## Features
 

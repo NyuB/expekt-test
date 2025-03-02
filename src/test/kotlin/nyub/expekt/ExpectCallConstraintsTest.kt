@@ -111,14 +111,11 @@ internal class ExpectCallConstraintsTest {
 
     @Test
     fun `space between expect and opening parenthesis`() {
-        ExpectTests(promote = true).expectTest {
-            assertThatThrownBy {
-                //    v
-                expect ("""
-                           """
-                )
-            }.isExpectCallConstraintError()
-                .hasMessageContaining("could not find 'expect(' call")
+        ExpectTests().expectTest {
+            //                ↓
+            "<CONTENT>".expect ("""
+                <CONTENT>
+            """.trimIndent())
         }
     }
 

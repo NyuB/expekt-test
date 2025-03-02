@@ -200,7 +200,12 @@ data class ExpectTests(
             }
 
         val scanner = ExpectCallScanner(lines, expectLine, expectColumn)
-        scanner.identifier("expect(").getOrElse {
+        scanner.identifier("expect").getOrElse {
+            return fail(it)
+        }
+
+        scanner.skipNonSignificantCharacters()
+        scanner.identifier("(").getOrElse {
             return fail(it)
         }
         scanner.skipNonSignificantCharacters()
@@ -226,12 +231,12 @@ data class ExpectTests(
     private fun locateExpectCallColumn(lines: List<String>, expectCallLineIndex: Int): Result<Int> {
         if (expectCallLineIndex >= lines.size) return fail("provided call site line is greater than file's lines count")
         val callLine = lines[expectCallLineIndex]
+        val expectCallPattern = Regex("expect[\\s\\t]*\\(")
 
-        val containsExpectAt = callLine.indexOf(expectCall)
-        if (containsExpectAt == -1) return fail("could not find 'expect(' call")
-        val containsAnotherExpect = callLine.indexOf(expectCall, startIndex = containsExpectAt + 1)
-        if (containsAnotherExpect != -1) return fail("found two 'expect(' sequences on the same line")
-        return Result.success(containsExpectAt)
+        val found = expectCallPattern.findAll(callLine).toList()
+        if (found.isEmpty()) return fail("could not find 'expect(' call")
+        if (found.size > 1) return fail("found two 'expect(' sequences on the same line")
+        return Result.success(found.first().range.first)
     }
 
     private fun expectCallSite(): StackTraceElement {
@@ -245,7 +250,6 @@ data class ExpectTests(
 }
 
 private const val tripleQuotes = "\"\"\""
-private const val expectCall = "expect("
 
 private fun fail(message: String): Result<Nothing> = Result.failure(IllegalStateException(message))
 

@@ -77,9 +77,7 @@ Expekt detects string blocks to check and promote based on a few heuristics.
 
 This imposes some formatting rule regarding the `expect(` call.
 
-1) the `expect(` call should be written fully in place
-   - not aliased
-   - without spacing between the function name and the opening parenthesis
+1) the `expect(` call should be written in place, not aliased
 2) the expected content
    - should be in a triple-quoted-string block
    - should not use [Kotlin string interpolation](https://kotlinlang.org/docs/strings.html#string-templates)
