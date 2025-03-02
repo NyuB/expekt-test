@@ -6,12 +6,11 @@ import org.junit.jupiter.api.Test
 
 internal class ExpectCallConstraintsTest {
     @Test
-    fun `when the expected string cannot be found, raise an error hinting toward missing triple-quotes`() =
-        ExpectTests(promote = true).expectTest {
-            assertThatThrownBy { expect("<CONTENT>") }
-                .isExpectCallConstraintError()
-                .hasMessageContaining("could not find opening quotes")
-        }
+    fun `single quoted string`() = ExpectTests(promote = true).expectTest {
+        assertThatThrownBy { expect("<CONTENT>") }
+            .isExpectCallConstraintError()
+            .hasMessageContaining("could not find opening quotes")
+    }
 
     @Test
     fun `immediately closed string block`() = ExpectTests(promote = true).expectTest {
@@ -30,7 +29,6 @@ internal class ExpectCallConstraintsTest {
                                      """
         )
     }
-
 
     @Test
     fun `standalone string block after erroneous call to expect`() = ExpectTests(promote = true).expectTest {
