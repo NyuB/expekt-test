@@ -41,7 +41,7 @@ internal class ExpectTestsTest {
 
     /**
      * To reproduce the setup that triggered the failure, remove the content of the expected blocks Before the
-     * synchronization fixes, on thread was reading the file while the other was writing to it
+     * synchronization fixes, one thread was reading the file while the other was writing to it
      */
     @Test
     fun `multi-threading test`() {
