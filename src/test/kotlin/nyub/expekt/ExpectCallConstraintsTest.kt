@@ -25,8 +25,8 @@ internal class ExpectCallConstraintsTest {
         expect( // Keep string block on the next line
             // Another line
             """
-                                    <CONTENT>
-                                     """
+            <CONTENT>
+             """
         )
     }
 
@@ -36,12 +36,9 @@ internal class ExpectCallConstraintsTest {
             // The next two statements are on consecutive lines
             expect("<CONTENT>")
             """
-                        Just a string block
-                    """
-                .let(::println)
-        }
-            .isExpectCallConstraintError()
-            .hasMessageContaining("could not find opening quotes")
+            Just a string block
+            """.trimIndent()
+        }.isExpectCallConstraintError().hasMessageContaining("could not find opening quotes")
     }
 
     @Test
@@ -50,8 +47,8 @@ internal class ExpectCallConstraintsTest {
             fun alias(s: String) = expect(s)
             alias(
                 """
-                                <CONTENT>
-                           """
+                   <CONTENT>
+                   """
             )
         }
             .isExpectCallConstraintError()
@@ -67,9 +64,8 @@ internal class ExpectCallConstraintsTest {
             )
             // Before the fix, string block below was confused and interleaved with the end of the above block
             """
-                    OOPS
-                """
-                .trimIndent()
+            OOPS
+            """.trimIndent()
         }
             .isExpectCallConstraintError()
             .hasMessageContaining("found two 'expect(' sequences on the same line")
@@ -81,18 +77,19 @@ internal class ExpectCallConstraintsTest {
         print(content)
         assertThatThrownBy {
             expect(
-                """
-                        $content
-                       """
+            """
+                    $content
+                   """
             )
         }
             .isExpectCallConstraintError()
             .hasMessageContaining("string interpolation is not allowed within expected string block")
+
         assertThatThrownBy {
             expect(
-                """
-                        ${content}
-                       """
+            """
+                    ${content}
+                   """
             )
         }
             .isExpectCallConstraintError()
