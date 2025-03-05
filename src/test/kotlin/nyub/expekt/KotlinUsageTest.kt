@@ -15,7 +15,7 @@ internal class KotlinUsageTest {
         println("Just print as usual")
         println("   along your test")
         print("and then ... ")
-        println("expect")
+        print("expect")
 
         expect(
             """

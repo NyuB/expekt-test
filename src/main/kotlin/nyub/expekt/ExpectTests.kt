@@ -110,8 +110,11 @@ data class ExpectTests(
          */
         fun expect(expected: String) =
             try {
-                val actual = output.toString().trimEmptyLines()
-                creator.expect(expected, actual)
+                val actual = output.toString()
+                creator.expect(
+                    expected.trimTrailingWhitespacesAndNewlines(),
+                    actual.trimTrailingWhitespacesAndNewlines(),
+                )
             } finally {
                 output.clear()
             }
@@ -121,8 +124,10 @@ data class ExpectTests(
          * [creator] is in promote mode.
          */
         fun Any.expect(expected: String) {
-            val actualString = toString().trimEmptyLines()
-            creator.expect(expected, actualString)
+            creator.expect(
+                expected.trimTrailingWhitespacesAndNewlines(),
+                toString().trimTrailingWhitespacesAndNewlines(),
+            )
         }
 
         /**
@@ -140,19 +145,18 @@ data class ExpectTests(
             output.clear()
         }
 
-        private fun String.trimEmptyLines() =
+        private fun String.trimTrailingWhitespacesAndNewlines() =
             this.split("\n")
-                .map { it.trimEnd() }
                 .dropWhile { it.isEmpty() }
                 .dropLastWhile { it.isEmpty() }
-                .joinToString(separator = "\n")
+                .joinToString(separator = "\n") { it.trimEnd() }
     }
 
     private fun expect(expected: String, actual: String) {
         if (promote) {
             promote(actual)
         } else {
-            assertThat(actual).isEqualTo(expected.trim { it.isWhitespace() || it == '\n' })
+            assertThat(actual).isEqualTo(expected)
         }
     }
 

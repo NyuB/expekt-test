@@ -2,6 +2,9 @@
 ## Features
 - Allow arbitrary spaces between expect and opening parenthesis
 
+## Bugfixes
+- Do not ignore leading whitespaces in expected string block
+
 # 1.0.0
 ## Features
 

@@ -1,5 +1,6 @@
 package nyub.expekt
 
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 
@@ -23,6 +24,30 @@ internal class ExpectTestsTest {
                 .trimIndent()
         )
     }
+
+    @Test
+    fun `ignore leading and trailing newlines`() = expectTest {
+        print("Start")
+        expect(
+            """
+Start
+"""
+        )
+    }
+
+    @Test
+    fun `keep leading white spaces`() =
+        ExpectTests(promote = false).expectTest {
+            assertThatThrownBy {
+                    print("<CONTENT>")
+                    expect(
+                        """
+ <CONTENT>
+"""
+                    )
+                }
+                .isInstanceOf(AssertionError::class.java)
+        }
 
     @Test
     fun `handle cases where there is more newline in the expected string than actual lines in the string blocks`() =
