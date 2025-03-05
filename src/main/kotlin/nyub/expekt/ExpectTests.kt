@@ -229,6 +229,9 @@ data class ExpectTests(
         }
 
         if (endIndex <= startIndex) return fail("closing quotes must be on a different line than opening ones")
+        if (!lines[scanner.position.line].trimStart().startsWith(tripleQuotes))
+            return fail("closing quotes must be on a different line than expected content")
+
         return Result.success(startIndex to endIndex)
     }
 

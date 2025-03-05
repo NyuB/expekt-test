@@ -17,6 +17,13 @@ internal class ExpectCallConstraintsTest {
         }
 
     @Test
+    fun `content before closing triple-quotes`() =
+        constraintNotRespected("closing quotes must be on a different line than expected content") {
+            expect("""
+                <CONTENT>""".trimIndent())
+        }
+
+    @Test
     fun `standalone string block after erroneous call to expect`() =
         constraintNotRespected("could not find opening quotes") {
             // The next two statements are on consecutive lines

@@ -84,7 +84,9 @@ This imposes some formatting rule regarding the `expect(` call.
    - should be in a triple-quoted-string block
    - should not use [Kotlin string interpolation](https://kotlinlang.org/docs/strings.html#string-templates)
 3) the opening triple-quotes should be the next token after the `expect(` call (not nested in parentheses or aliased)
-4) the closing triple-quotes should be on a different line than the opening triple-quotes
+4) the closing triple-quotes
+    - should be on a different line than the opening triple-quotes
+    - should be on a different line than the expected content
 
 #### OK:
 
@@ -121,6 +123,12 @@ expect("<CONTENT>")
 expect("""<CONTENT>""")
 ```
 - (because the closing quotes are on the same line as the opening quotes)
+
+```kotlin
+expect("""
+<CONTENT>""")
+```
+- (because the closing quotes are on the same line as the expected content)
 
 ```kotlin
 expect(f("""

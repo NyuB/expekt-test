@@ -1,9 +1,27 @@
 # Current developments
 ## Features
 - Allow arbitrary spaces between expect and opening parenthesis
+```kotlin
+"<CONTENT>".expect   ("""
+<CONTENT>
+""")
+```
 
 ## Bugfixes
 - Do not ignore leading whitespaces in expected string block
+- If there was content before the expected block closing quotes, it was kept as-is during promotion. Now enforce closing quote to be on a separate line.
+Before the fix:
+```kotlin
+"<ACTUAL>".expect("""
+<CONTENT>""")
+
+// After promotion
+
+"<ACTUAL>".expect("""
+<ACTUAL>
+<CONTENT>""") // Oops
+```
+This now raises an error "closing quotes must be on a different line than expected content"
 
 # 1.0.0
 ## Features
