@@ -1,55 +1,17 @@
-package nyub.expekt
+package nyub.expekt.demos
 
-import nyub.expekt.DemoTest.SignalState
-import nyub.expekt.DemoTest.SignalState.HIGH
-import nyub.expekt.DemoTest.SignalState.LOW
+import nyub.expekt.ExpectTests
+import nyub.expekt.demos.WaveformsTest.SignalState.*
 import org.junit.jupiter.api.Test
 
-typealias SignalStates = Map<String, List<SignalState>>
+typealias SignalStates = Map<String, List<WaveformsTest.SignalState>>
 
 typealias GateStates = Map<String, List<Int>>
 
-class DemoTest {
-    @Test
-    fun `histogram demo`() =
-        ExpectTests(promote = true).expectTest {
-            val values = listOf(7, 3, 9, 4, 5, 7, 3, 8, 4, 2)
-            printHistogram(values)
-            expect(
-                """
-                9 |     □
-                8 |     □         □
-                7 | □   □     □   □
-                6 | □   □     □   □
-                5 | □   □   □ □   □
-                4 | □   □ □ □ □   □ □
-                3 | □ □ □ □ □ □ □ □ □
-                2 | □ □ □ □ □ □ □ □ □ □
-                1 | □ □ □ □ □ □ □ □ □ □
-            """
-                    .trimIndent()
-            )
-
-            printHistogram(values.reversed())
-            expect(
-                """
-                9 |               □
-                8 |     □         □
-                7 |     □   □     □   □
-                6 |     □   □     □   □
-                5 |     □   □ □   □   □
-                4 |   □ □   □ □ □ □   □
-                3 |   □ □ □ □ □ □ □ □ □
-                2 | □ □ □ □ □ □ □ □ □ □
-                1 | □ □ □ □ □ □ □ □ □ □
-            """
-                    .trimIndent()
-            )
-        }
-
+class WaveformsTest {
     @Test
     fun `waveforms demo`() =
-        ExpectTests(promote = true).expectTest {
+        ExpectTests().expectTest {
             val clock = Clock()
             val incr = CyclicSignal(listOf(LOW, LOW, HIGH, HIGH, HIGH, LOW, LOW, HIGH, HIGH, LOW))
             val counter = Counter(clock, incr)
@@ -73,6 +35,7 @@ class DemoTest {
             |counter   |│0       │1    │2          │3          │4    │5          │6          │7
             |          |┴────────┴─────┴───────────┴───────────┴─────┴───────────┴───────────┴─────
             |__________|
+            
         """
                     .trimIndent()
             )
@@ -112,7 +75,7 @@ class DemoTest {
     private val labelPad = "".labelPad
     private val signalPad = " ".signalRepeat
 
-    fun ExpectTests.ExpectTest.printWaveforms(signalStates: SignalStates, gateStates: GateStates) {
+    private fun ExpectTests.ExpectTest.printWaveforms(signalStates: SignalStates, gateStates: GateStates) {
         printf(" %s %n", "_".repeat(10))
         signalStates.forEach { (l, s) ->
             printSignalHistory(l, s)
@@ -124,7 +87,7 @@ class DemoTest {
         }
     }
 
-    fun ExpectTests.ExpectTest.printSignalHistory(label: String, states: List<SignalState>) {
+    private fun ExpectTests.ExpectTest.printSignalHistory(label: String, states: List<SignalState>) {
         print("|$labelPad|")
         states.forEachWithPrevious { prev, it ->
             if (it == HIGH && prev != LOW) print("─${"─".signalRepeat}")
@@ -148,7 +111,7 @@ class DemoTest {
         newLine()
     }
 
-    fun ExpectTests.ExpectTest.printGateHistory(label: String, values: List<Int>) {
+    private fun ExpectTests.ExpectTest.printGateHistory(label: String, values: List<Int>) {
         printGateHistoryFrame(values, "┬")
         var prev: Int? = null
         newLine()
@@ -162,7 +125,7 @@ class DemoTest {
         newLine()
     }
 
-    fun ExpectTests.ExpectTest.printGateHistoryFrame(values: List<Int>, onChange: String) {
+    private fun ExpectTests.ExpectTest.printGateHistoryFrame(values: List<Int>, onChange: String) {
         var prev: Int? = null
         print("|$labelPad|")
         values.forEach {
@@ -218,19 +181,6 @@ class DemoTest {
 
         override fun tick() {
             if (clock.state == LOW && incr.state == HIGH) dout++
-        }
-    }
-
-    private fun ExpectTests.ExpectTest.printHistogram(values: List<Int>) {
-        val maxi = values.max()
-        val mutableValues = values.toMutableList()
-        for (i in (1..maxi).reversed()) {
-            print("$i | ")
-            for (j in 0..<mutableValues.size) {
-                if (mutableValues[j] >= i) print("□") else print(" ")
-                if (j != mutableValues.size - 1) print(" ")
-            }
-            if (i != 1) println("")
         }
     }
 

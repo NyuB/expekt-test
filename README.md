@@ -61,9 +61,11 @@ Feel free to download [ExpectTests.kt](src/main/kotlin/nyub/expekt/ExpectTests.k
 
 ### Kotlin
 
-The recommended usage for Kotlin is to define an ExpectTests shared configuration and write your test with the `expectTest { }` scope function. See [the kotlin tests](src/test/kotlin/nyub/expekt/KotlinUsageTest.kt) for examples.
+The recommended usage for Kotlin is to define an ExpectTests shared configuration and write your test with the `expectTest { }` scope function. See [the kotlin tests](src/test/kotlin/nyub/expekt/KotlinUsageTest.kt) for setup examples.
 
 The JUnit 5 extension is also usable from the Kotlin side, even if it brings fewer improvements than for [Java users](#java).
+
+More examples are available in [the demo folder](src/test/kotlin/nyub/expekt/demos)
 
 ### Java
 
