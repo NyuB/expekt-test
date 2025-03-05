@@ -9,7 +9,15 @@
 
 ## Bugfixes
 - Do not ignore leading whitespaces in expected string block
+
+Before the fix:
+```kotlin
+" <ACTUAL>".expect("""
+ <ACTUAL>
+""") // Assertion error "<ACTUAL>" is not equal to " <ACTUAL>"
+```
 - If there was content before the expected block closing quotes, it was kept as-is during promotion. Now enforce closing quote to be on a separate line.
+
 Before the fix:
 ```kotlin
 "<ACTUAL>".expect("""
