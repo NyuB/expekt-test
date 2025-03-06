@@ -146,7 +146,7 @@ data class ExpectTests(
         }
 
         private fun String.trimTrailingWhitespacesAndNewlines() =
-            this.split("\n")
+            this.lines()
                 .dropWhile { it.isEmpty() }
                 .dropLastWhile { it.isEmpty() }
                 .joinToString(separator = "\n") { it.trimEnd() }
@@ -165,7 +165,7 @@ data class ExpectTests(
             val callSite = expectCallSite()
             val callSiteFile =
                 resolveClassesFrom.resolve(callSite.className.replace(".", "/")).parent.resolve(callSite.fileName!!)
-            val callSiteLines = Files.readString(callSiteFile).split("\n")
+            val callSiteLines = Files.readString(callSiteFile).lines()
 
             val lineNumber = offsets.getAdjustedLine(callSiteFile, callSite.lineNumber)
             val (stringStartIndex, stringEndIndex) =
@@ -179,7 +179,7 @@ data class ExpectTests(
             val between = callSiteLines.subList(stringStartIndex + 1, stringEndIndex)
             val after = callSiteLines.subList(stringEndIndex, callSiteLines.size)
 
-            val actualLines = actual.split("\n")
+            val actualLines = actual.lines()
             val replacement = ExpectedLinesReplacement(before, between, after).replaceWith(actualLines)
             Files.writeString(callSiteFile, replacement)
             offsets.record(callSiteFile, callSite.lineNumber, actualLines.size - between.size)
@@ -255,6 +255,8 @@ data class ExpectTests(
         return currentStack[thisMethodIndex + 1]
     }
 }
+
+private fun String.lines(): List<String> = this.split(Regex("(\\r)?\\n"))
 
 private const val tripleQuotes = "\"\"\""
 

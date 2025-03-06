@@ -8,7 +8,8 @@
 ```
 
 ## Bugfixes
-- Do not ignore leading whitespaces in expected string block
+- promotion could introduce unwanted empty lines on windows because of **CRLF** line endings. **NB**: promotion always introduce **LF**-separated lines, use git or your formatter to re-introduce **CRLF** if necessary.
+- leading whitespaces were ignored in expected string block
 
 Before the fix:
 ```kotlin
@@ -16,7 +17,7 @@ Before the fix:
  <ACTUAL>
 """) // Assertion error "<ACTUAL>" is not equal to " <ACTUAL>"
 ```
-- If there was content before the expected block closing quotes, it was kept as-is during promotion. Now enforce closing quote to be on a separate line.
+- if there was content before the expected block closing quotes, it was kept as-is during promotion. Now enforce closing quote to be on a separate line.
 
 Before the fix:
 ```kotlin
