@@ -1,14 +1,13 @@
-# Current developments
-## Features
-- Allow arbitrary spaces between expect and opening parenthesis
+# 1.0.1
+## Bugfixes
+
+- promotion could introduce unwanted empty lines on windows because of **CRLF** line endings. **NB**: promotion always introduce **LF**-separated lines, use git or your formatter to re-introduce **CRLF** if necessary.
+- allow arbitrary spaces between expect and opening parenthesis
 ```kotlin
 "<CONTENT>".expect   ("""
 <CONTENT>
 """)
 ```
-
-## Bugfixes
-- promotion could introduce unwanted empty lines on windows because of **CRLF** line endings. **NB**: promotion always introduce **LF**-separated lines, use git or your formatter to re-introduce **CRLF** if necessary.
 - leading whitespaces were ignored in expected string block
 
 Before the fix:

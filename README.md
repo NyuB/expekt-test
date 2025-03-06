@@ -21,21 +21,39 @@ Inline snapshot testing for Kotlin and Java, inspired by JaneStreet's [expect-te
 ## Principles
 
 Expekt is a lightweight **inline** **snapshot testing** tool:
-- it fails when there is a diff between expected outputs and actual ones. With Expekt, the expected outputs are expressed as raw string blocks in source code.
-- it offers a 'promotion' mechanism to replace the expected outputs with the actual ones when the user (developer) decides the change is suitable. The promotion is done directly in the source code, altering the string blocks. 
+- targeted toward to the assert/then part of a typical arrange-act-assert/given-when-then test setup
+- compare textual representation of expected (**snapshot**ed) outputs and actual ones. With Expekt, the expected outputs are expressed as raw string blocks in source code (the **inline** part).
+- offers a 'promotion' mechanism to replace the expected outputs with the actual ones when the user (developer) decides the change is suitable. The promotion is done directly in the source code, altering the string blocks. 
 
 This means that efforts to represent your objects as readable strings, (such as ascii art, tables, graphs ...) can be directly exploited as readable assertions.
 It also makes updating these assertions effortless, should their representation change.
 
-## External resources on snapshot testing
+## Alternatives and external resources on snapshot testing
 
-Inline snapshot (also called approval, acceptance, golden-master, ...) is a popular technique in many ecosystems.
+Snapshot testing (also called approval, acceptance, golden-master, ...) is a popular technique in many ecosystems. 
 
 A few resources on this topic:
 - [The JaneStreet article on the expect-test library that inspired Expekt](https://blog.janestreet.com/the-joy-of-expect-tests/)
 - [An article describing the advantages of inline snapshot testing](https://ianthehenry.com/posts/my-kind-of-repl/)
 - [An article from TigerBeetle describing their Zig library for inline snapshot testing](https://tigerbeetle.com/blog/2024-05-14-snapshot-testing-for-the-masses/)
-- [Insta, a Rust library for snapshot testing](https://tigerbeetle.com/blog/2024-05-14-snapshot-testing-for-the-masses/)
+
+Some alternatives or equivalents in other ecosystems:
+- [Selfie (Java/Python/JavaScript)](https://selfie.dev/jvm)
+- [expect-test (OCaml)](https://github.com/janestreet/ppx_expect)
+- [Jest (JavaScript)](https://jestjs.io/fr/docs/snapshot-testing)
+- [Insta (Rust)](https://insta.rs/)
+- [Verify (C#)](https://github.com/VerifyTests/Verify)
+
+Here is a quick comparison table if you want to choose between Expekt and another JVM tool, or come from another language and want an idea of the corresponding features in Expekt:
+
+| Tool        |        JVM         |    Inline snapshot | File snapshot      | Update control                                       | Interactive snapshot review | Extensible diff/review |
+|-------------|:------------------:|-------------------:|--------------------|------------------------------------------------------|-----------------------------|------------------------|
+| Expekt      | :white_check_mark: | :white_check_mark: | :x:                | flag per test, configure as you see fit              | :x:                         | :x:                    |
+| Selfie      | :white_check_mark: | :white_check_mark: | :white_check_mark: | global flag, `toBe_TODO()` or `//selfieonce` comment | :x:                         | :x:                    |
+| expect-test |        :x:         | :white_check_mark: | :x:                | promotion command to update differing snapshots      | :x:                         | :x:                    |
+| Jest        |        :x:         | :white_check_mark: | :white_check_mark: | promotion command to update differing snapshots      | :v:                         | :x:                    |                                              |
+| Insta       |        :x:         | :white_check_mark: | :white_check_mark: | global flag                                          | :v:                         | :x:                    |
+| Verify      |        :x:         |                :x: | :white_check_mark: | interactive                                          | :v:                         | :white_check_mark:     |
 
 ## Setup
 
@@ -47,7 +65,7 @@ Add expekt dependency to your `pom.xml`:
 <dependency>
     <groupId>io.github.nyub</groupId>
     <artifactId>expekt-test</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <scope>test</scope>
 </dependency>
 ```
