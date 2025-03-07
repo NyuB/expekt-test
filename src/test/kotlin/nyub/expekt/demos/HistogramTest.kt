@@ -10,31 +10,31 @@ class HistogramTest {
         printVerticalHistogram(values)
         expect(
             """
-                9 |     □
-                8 |     □         □
-                7 | □   □     □   □
-                6 | □   □     □   □
-                5 | □   □   □ □   □
-                4 | □   □ □ □ □   □ □
-                3 | □ □ □ □ □ □ □ □ □
-                2 | □ □ □ □ □ □ □ □ □ □
-                1 | □ □ □ □ □ □ □ □ □ □
-            """
+        9 |     □
+        8 |     □         □
+        7 | □   □     □   □
+        6 | □   □     □   □
+        5 | □   □   □ □   □
+        4 | □   □ □ □ □   □ □
+        3 | □ □ □ □ □ □ □ □ □
+        2 | □ □ □ □ □ □ □ □ □ □
+        1 | □ □ □ □ □ □ □ □ □ □
+        """
                 .trimIndent()
         )
 
         printVerticalHistogram(values.reversed())
         expect(
             """
-                9 |               □
-                8 |     □         □
-                7 |     □   □     □   □
-                6 |     □   □     □   □
-                5 |     □   □ □   □   □
-                4 |   □ □   □ □ □ □   □
-                3 |   □ □ □ □ □ □ □ □ □
-                2 | □ □ □ □ □ □ □ □ □ □
-                1 | □ □ □ □ □ □ □ □ □ □
+            9 |               □
+            8 |     □         □
+            7 |     □   □     □   □
+            6 |     □   □     □   □
+            5 |     □   □ □   □   □
+            4 |   □ □   □ □ □ □   □
+            3 |   □ □ □ □ □ □ □ □ □
+            2 | □ □ □ □ □ □ □ □ □ □
+            1 | □ □ □ □ □ □ □ □ □ □
             """
                 .trimIndent()
         )
@@ -46,10 +46,10 @@ class HistogramTest {
         printHorizontalHistogram(values)
         expect(
             """
-         Cats     |■■■■■■■ 7
-         Chihuahua|■■■■ 4
-         Aligator |■■■■■■■■■■■■■ 13
-         Donkey   |■■■■■ 5
+        Cats     |■■■■■■■ 7
+        Chihuahua|■■■■ 4
+        Aligator |■■■■■■■■■■■■■ 13
+        Donkey   |■■■■■ 5
         """
                 .trimIndent()
         )

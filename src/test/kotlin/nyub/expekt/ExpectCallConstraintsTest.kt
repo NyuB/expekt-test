@@ -92,7 +92,7 @@ internal class ExpectCallConstraintsTest {
         expect( // Keep string block on the next line
             // Another line
             """
-            <CONTENT>
+             <CONTENT>
              """
         )
     }

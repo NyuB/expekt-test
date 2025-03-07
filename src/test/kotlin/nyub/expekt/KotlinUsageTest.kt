@@ -19,9 +19,9 @@ internal class KotlinUsageTest {
 
         expect(
             """
-            Just print as usual
-               along your test
-            and then ... expect
+        Just print as usual
+           along your test
+        and then ... expect
         """
                 .trimIndent()
         )
@@ -37,7 +37,7 @@ internal class KotlinUsageTest {
 
         billy.expect(
             """
-                Billy 'The Kid' McCarty
+            Billy 'The Kid' McCarty
             """
                 .trimIndent()
         )
@@ -48,7 +48,7 @@ internal class KotlinUsageTest {
         print("One")
         expect(
             """
-            One
+        One
         """
                 .trimIndent()
         )
@@ -56,7 +56,7 @@ internal class KotlinUsageTest {
         print("Two")
         expect(
             """
-            Two
+        Two
         """
                 .trimIndent()
         )

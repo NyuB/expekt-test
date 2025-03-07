@@ -16,10 +16,10 @@ internal class ExpectTestsTest {
         print("End")
         expect(
             """
-            Start
-            
-            
-            End
+        Start
+        
+        
+        End
         """
                 .trimIndent()
         )
@@ -57,9 +57,9 @@ Start
             print("End")
             expect(
                 """
-            Start
-            End
-        """
+                Start
+                End
+                """
                     .trimIndent()
             )
         }
@@ -77,11 +77,11 @@ Start
                         repeat(5) { println("A") }
                         expect(
                             """
-                        A
-                        A
-                        A
-                        A
-                        A
+                A
+                A
+                A
+                A
+                A
                 """
                                 .trimIndent()
                         )
@@ -95,11 +95,11 @@ Start
                         repeat(5) { println("B") }
                         expect(
                             """
-                        B
-                        B
-                        B
-                        B
-                        B
+                B
+                B
+                B
+                B
+                B
                 """
                                 .trimIndent()
                         )

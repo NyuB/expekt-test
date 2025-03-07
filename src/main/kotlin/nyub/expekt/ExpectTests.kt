@@ -402,18 +402,7 @@ private class ExpectedStringBlock(
     fun replaceWith(actualLines: List<String>) =
         (before + actualLines.map { commonPrefix + it } + after).joinToString(separator = "\n")
 
-    private val commonPrefix: String = sharedIndentation(expected)
-
-    private fun sharedIndentation(between: List<String>): String {
-        if (between.isEmpty()) return ""
-        var minPrefix: String? = null
-        between.forEach {
-            if (minPrefix == null || !it.startsWith(minPrefix!!)) {
-                minPrefix = spacePrefix(it)
-            }
-        }
-        return minPrefix!!
-    }
+    private val commonPrefix: String = after.firstOrNull()?.let(::spacePrefix) ?: ""
 
     private fun spacePrefix(s: String): String {
         var space = 0

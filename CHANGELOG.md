@@ -1,6 +1,10 @@
 # Current developments
+
 ## Features
 - Allow to trigger promotion with a `promote@` label before expected string block (Kotlin only)
+
+## Breaking Changes
+- Promoted lines indentation is now based on the closing triple quotes indentation. This is breaking for Kotlin blocks not combined with `String#trimIndent()`.
 
 # 1.0.1
 ## Bugfixes

@@ -12,9 +12,9 @@ class RegexesTest {
         matches.representation().forEach(::println)
         expect(
             """
-            This  snake _ id  is in  snake _ case
-                 └─────┘ └──┘       └─────┘ └────┘
-                 └──────────┘       └────────────┘
+        This  snake _ id  is in  snake _ case
+             └─────┘ └──┘       └─────┘ └────┘
+             └──────────┘       └────────────┘
         """
                 .trimIndent()
         )
