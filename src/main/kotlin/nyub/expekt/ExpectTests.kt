@@ -152,19 +152,10 @@ data class ExpectTests(
                 .joinToString(separator = "\n") { it.trimEnd() }
     }
 
-    private fun expect(expected: String, actual: String) {
-        if (promote) {
-            promote(actual)
-        } else {
-            assertThat(actual).isEqualTo(expected)
-        }
-    }
-
-    private fun promote(actual: String) =
+    private fun expect(expected: String, actual: String) =
         synchronized(ExpectTests::class.java) {
             val callSite = expectCallSite()
-            val callSiteFile =
-                resolveClassesFrom.resolve(callSite.className.replace(".", "/")).parent.resolve(callSite.fileName!!)
+            val callSiteFile = resolveCallSiteFile(callSite)
             val callSiteLines = Files.readString(callSiteFile).lines()
 
             val lineNumber = offsets.getAdjustedLine(callSiteFile, callSite.lineNumber)
@@ -175,11 +166,23 @@ data class ExpectTests(
                     )
                 }
 
-            val actualLines = actual.lines()
-            val replacement = expectedStringBlock.replaceWith(actualLines)
-            Files.writeString(callSiteFile, replacement)
-            offsets.record(callSiteFile, callSite.lineNumber, actualLines.size - expectedStringBlock.expected.size)
+            if (expectedStringBlock.promoteLabeled || promote) {
+                promote(actual, expectedStringBlock, callSite)
+            } else {
+                assertThat(actual).isEqualTo(expected)
+            }
         }
+
+    private fun resolveCallSiteFile(callSite: StackTraceElement): Path =
+        resolveClassesFrom.resolve(callSite.className.replace(".", "/")).parent.resolve(callSite.fileName!!)
+
+    private fun promote(actual: String, expectedStringBlock: ExpectedStringBlock, callSite: StackTraceElement) {
+        val actualLines = actual.lines()
+        val callSiteFile = resolveCallSiteFile(callSite)
+        val replacement = expectedStringBlock.replaceWith(actualLines)
+        Files.writeString(callSiteFile, replacement)
+        offsets.record(callSiteFile, callSite.lineNumber, actualLines.size - expectedStringBlock.expected.size)
+    }
 
     /**
      * Searches for
@@ -208,6 +211,9 @@ data class ExpectTests(
         scanner.identifier("(").getOrElse {
             return fail(it)
         }
+
+        scanner.skipNonSignificantCharacters()
+        val promoteLabeled = scanner.`identifier?`("promote@")
         scanner.skipNonSignificantCharacters()
 
         val startIndex = scanner.position.line
@@ -232,7 +238,7 @@ data class ExpectTests(
         val between = lines.subList(startIndex + 1, endIndex)
         val after = lines.subList(endIndex, lines.size)
 
-        return ExpectedStringBlock(before, between, after).success
+        return ExpectedStringBlock(before, between, after, promoteLabeled).success
     }
 
     private fun locateExpectCallColumn(lines: List<String>, expectCallLineIndex: Int): Result<Int> {
@@ -340,6 +346,14 @@ private class ExpectCallScanner(val lines: List<String>, startLine: Int, startCo
         return Result.success(Unit)
     }
 
+    fun `identifier?`(id: String): Boolean {
+        val savePosition = position
+        val tried = identifier(id)
+        if (tried.isSuccess) return true
+        position = savePosition
+        return false
+    }
+
     fun stringBlockContent(): Result<Unit> {
         while (position.line < lines.size) {
             while (position.column < currentLine.length) {
@@ -383,6 +397,7 @@ private class ExpectedStringBlock(
     private val before: List<String>,
     val expected: List<String>,
     private val after: List<String>,
+    val promoteLabeled: Boolean,
 ) {
     fun replaceWith(actualLines: List<String>) =
         (before + actualLines.map { commonPrefix + it } + after).joinToString(separator = "\n")

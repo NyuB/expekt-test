@@ -77,6 +77,16 @@ internal class ExpectCallConstraintsTest {
         }
 
     @Test
+    fun `label other than promote@`() =
+        constraintNotRespected("could not find opening quotes") {
+            "<CONTENT>".expect(
+                notPromote@ """
+                <CONTENT>
+            """.trimIndent()
+            )
+        }
+
+    @Test
     fun `opening triple quotes not on the next line after expect call`() = ExpectTests(promote = true).expectTest {
         print("<CONTENT>")
         expect( // Keep string block on the next line

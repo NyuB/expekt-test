@@ -1,3 +1,7 @@
+# Current developments
+## Features
+- Allow to trigger promotion with a `promote@` label before expected string block (Kotlin only)
+
 # 1.0.1
 ## Bugfixes
 

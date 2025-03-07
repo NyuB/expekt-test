@@ -83,4 +83,15 @@ internal class KotlinUsageTest {
     fun `raises if not all output is consumed by assertions`() {
         assertThatThrownBy { expectTest { println("Not consumed") } }.isInstanceOf(AssertionError::class.java)
     }
+
+    @Test
+    fun `override promote with label`() = expectTest {
+        "<CONTENT>"
+            .expect(
+                promote@ """
+            <CONTENT>
+            """
+                    .trimIndent()
+            )
+    }
 }

@@ -46,14 +46,14 @@ Some alternatives or equivalents in other ecosystems:
 
 Here is a quick comparison table if you want to choose between Expekt and another JVM tool, or come from another language and want an idea of the corresponding features in Expekt:
 
-| Tool        |        JVM         |    Inline snapshot | File snapshot      | Update control                                       | Interactive snapshot review | Extensible diff/review |
-|-------------|:------------------:|-------------------:|--------------------|------------------------------------------------------|-----------------------------|------------------------|
-| Expekt      | :white_check_mark: | :white_check_mark: | :x:                | flag per test, configure as you see fit              | :x:                         | :x:                    |
-| Selfie      | :white_check_mark: | :white_check_mark: | :white_check_mark: | global flag, `toBe_TODO()` or `//selfieonce` comment | :x:                         | :x:                    |
-| expect-test |        :x:         | :white_check_mark: | :x:                | promotion command to update differing snapshots      | :x:                         | :x:                    |
-| Jest        |        :x:         | :white_check_mark: | :white_check_mark: | promotion command to update differing snapshots      | :v:                         | :x:                    |                                              |
-| Insta       |        :x:         | :white_check_mark: | :white_check_mark: | global flag                                          | :v:                         | :x:                    |
-| Verify      |        :x:         |                :x: | :white_check_mark: | interactive                                          | :v:                         | :white_check_mark:     |
+| Tool        |        JVM         |    Inline snapshot | File snapshot      | Update control                                                                         | Interactive snapshot review | Extensible diff/review |
+|-------------|:------------------:|-------------------:|--------------------|----------------------------------------------------------------------------------------|-----------------------------|------------------------|
+| Expekt      | :white_check_mark: | :white_check_mark: | :x:                | user-configurable flag, per test class, test method, or `promote@` label on a snapshot | :x:                         | :x:                    | 
+| Selfie      | :white_check_mark: | :white_check_mark: | :white_check_mark: | global flag, `toBe_TODO()` or `//selfieonce` comment                                   | :x:                         | :x:                    |
+| expect-test |        :x:         | :white_check_mark: | :x:                | promotion command to update differing snapshots                                        | :x:                         | :x:                    |
+| Jest        |        :x:         | :white_check_mark: | :white_check_mark: | promotion command to update differing snapshots                                        | :v:                         | :x:                    |
+| Insta       |        :x:         | :white_check_mark: | :white_check_mark: | global flag                                                                            | :v:                         | :x:                    |
+| Verify      |        :x:         |                :x: | :white_check_mark: | interactive                                                                            | :v:                         | :white_check_mark:     |
 
 ## Setup
 
@@ -81,13 +81,27 @@ Feel free to download [ExpectTests.kt](src/main/kotlin/nyub/expekt/ExpectTests.k
 
 The recommended usage for Kotlin is to define an ExpectTests shared configuration and write your test with the `expectTest { }` scope function. See [the kotlin tests](src/test/kotlin/nyub/expekt/KotlinUsageTest.kt) for setup examples.
 
+Promotion is triggered:
+- By passing `true` to the [ExpectTests](src/main/kotlin/nyub/expekt/ExpectTests.kt) `promote` parameter
+- By adding a `promote@` label before the [expected string block](#constraints-on-expected-string-blocks). This overrides the above-mentioned `promote` parameter
+```kotlin
+"<CONTENT>".expect(promote@"""
+<CONTENT>
+""")
+```
+
 The JUnit 5 extension is also usable from the Kotlin side, even if it brings fewer improvements than for [Java users](#java).
 
 More examples are available in [the demo folder](src/test/kotlin/nyub/expekt/demos)
 
 ### Java
 
-The recommended usage for Java is to use the provided JUnit 5 extension. See [the java tests](src/test/kotlin/nyub/expekt/JavaUsageTest.java) for examples
+The recommended usage for Java is to use the provided JUnit 5 extension. See [the java tests](src/test/kotlin/nyub/expekt/JavaUsageTest.java) for examples.
+
+Promotion is triggered:
+- By setting the system property `nyub.expekt.promote` to `"true"`
+- At class level by using `@Promote(true/false)` annotation
+- At method (test) level by using `@Promote(true/false)` annotation
 
 For non-junit codebases, the Kotlin scope functions are usable on the Java side, with slightly degraded ergonomics.
 
