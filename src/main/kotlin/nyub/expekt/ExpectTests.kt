@@ -168,21 +168,17 @@ data class ExpectTests(
             val callSiteLines = Files.readString(callSiteFile).lines()
 
             val lineNumber = offsets.getAdjustedLine(callSiteFile, callSite.lineNumber)
-            val (stringStartIndex, stringEndIndex) =
-                findTripleQuotedStringStart(callSiteLines, lineNumber - 1).getOrElse { e ->
+            val expectedStringBlock =
+                findExpectedStringBlock(callSiteLines, lineNumber - 1).getOrElse { e ->
                     throw RuntimeException(
                         "Could not find expected triple-quoted string block at $callSiteFile:$lineNumber: ${e.message}"
                     )
                 }
 
-            val before = callSiteLines.subList(0, stringStartIndex + 1)
-            val between = callSiteLines.subList(stringStartIndex + 1, stringEndIndex)
-            val after = callSiteLines.subList(stringEndIndex, callSiteLines.size)
-
             val actualLines = actual.lines()
-            val replacement = ExpectedLinesReplacement(before, between, after).replaceWith(actualLines)
+            val replacement = expectedStringBlock.replaceWith(actualLines)
             Files.writeString(callSiteFile, replacement)
-            offsets.record(callSiteFile, callSite.lineNumber, actualLines.size - between.size)
+            offsets.record(callSiteFile, callSite.lineNumber, actualLines.size - expectedStringBlock.expected.size)
         }
 
     /**
@@ -197,7 +193,7 @@ data class ExpectTests(
      * @return the line index of the opening triple-quote and the line index of the closing triple-quote, searching from
      *   [expectLine] line index, or fails if one of the two markers could not be found or the string block is invalid
      */
-    private fun findTripleQuotedStringStart(lines: List<String>, expectLine: Int): Result<Pair<Int, Int>> {
+    private fun findExpectedStringBlock(lines: List<String>, expectLine: Int): Result<ExpectedStringBlock> {
         val expectColumn =
             locateExpectCallColumn(lines, expectLine).getOrElse {
                 return fail(it)
@@ -232,7 +228,11 @@ data class ExpectTests(
         if (!lines[scanner.position.line].trimStart().startsWith(tripleQuotes))
             return fail("closing quotes must be on a different line than expected content")
 
-        return Result.success(startIndex to endIndex)
+        val before = lines.subList(0, startIndex + 1)
+        val between = lines.subList(startIndex + 1, endIndex)
+        val after = lines.subList(endIndex, lines.size)
+
+        return ExpectedStringBlock(before, between, after).success
     }
 
     private fun locateExpectCallColumn(lines: List<String>, expectCallLineIndex: Int): Result<Int> {
@@ -263,6 +263,9 @@ private const val tripleQuotes = "\"\"\""
 private fun fail(message: String): Result<Nothing> = Result.failure(IllegalStateException(message))
 
 private fun fail(throwable: Throwable): Result<Nothing> = Result.failure(throwable)
+
+private val <T> T.success: Result<T>
+    get() = Result.success(this)
 
 /**
  * Globally records line additions or removal to keep line counts up-to-date if there are multiple promotions to the
@@ -376,15 +379,15 @@ private class ExpectCallScanner(val lines: List<String>, startLine: Int, startCo
     }
 }
 
-private class ExpectedLinesReplacement(
+private class ExpectedStringBlock(
     private val before: List<String>,
-    between: List<String>,
+    val expected: List<String>,
     private val after: List<String>,
 ) {
     fun replaceWith(actualLines: List<String>) =
         (before + actualLines.map { commonPrefix + it } + after).joinToString(separator = "\n")
 
-    private val commonPrefix: String = sharedIndentation(between)
+    private val commonPrefix: String = sharedIndentation(expected)
 
     private fun sharedIndentation(between: List<String>): String {
         if (between.isEmpty()) return ""
