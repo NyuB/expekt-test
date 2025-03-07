@@ -15,7 +15,7 @@ ifeq (yes, $(AWK_AVAILABLE))
 	/^([^=])+[=]/{ if (doc == 1) { print "(variable) " $$0 "\n\t" comments "\n"; doc = 0 } next }\
 	/^([^:])+:/{ if (doc == 1) { print $$1 "\n\t" comments "\n"; doc = 0 } next }\
 	/./{ doc = 0 }\
-	' Makefile
+	' Makefile $(wildcard etc/*.mk)
 else
 	@$(INSTALL_AWK)
 endif
