@@ -18,7 +18,7 @@ test-promote-no-diff:
 # Apply formatting rules to sources
 fmt:
 	mvn spotless:apply
-	$(PY) -m black etc/release_changelog.py
+	$(PY) -m black etc/*.py
 
 # Enforce formatting rules, failing if any source is not correctly formatted
 fmt-check:
@@ -29,6 +29,10 @@ fmt-check:
 # This corresponds to the first section in CHANGELOG.md, with the main header removed
 release_changelog.md: CHANGELOG.md etc/release_changelog.py
 	$(PY) etc/release_changelog.py CHANGELOG.md > release_changelog.md
+
+# Validate that the ${VERSION} variable complies to semantic versioning
+validate_semver:
+	$(PY) etc/validate_semver.py $(VERSION)
 
 include etc/help.mk
 include etc/py.mk

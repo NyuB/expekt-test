@@ -45,6 +45,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Validate version name
+        run: make validate_semver VERSION=${{ github.event.inputs.version }}
+
       - name: Set up JDK 17 & release credentials
         uses: actions/setup-java@v4
         with:
