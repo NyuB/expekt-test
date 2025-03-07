@@ -10,18 +10,17 @@ typealias GateStates = Map<String, List<Int>>
 
 class WaveformsTest {
     @Test
-    fun `waveforms demo`() =
-        ExpectTests().expectTest {
-            val clock = Clock()
-            val incr = CyclicSignal(listOf(LOW, LOW, HIGH, HIGH, HIGH, LOW, LOW, HIGH, HIGH, LOW))
-            val counter = Counter(clock, incr)
-            val signals = mapOf("clock" to clock, "incr" to incr)
-            val gates = mapOf("counter" to counter)
+    fun `waveforms demo`() = expectTest {
+        val clock = Clock()
+        val incr = CyclicSignal(listOf(LOW, LOW, HIGH, HIGH, HIGH, LOW, LOW, HIGH, HIGH, LOW))
+        val counter = Counter(clock, incr)
+        val signals = mapOf("clock" to clock, "incr" to incr)
+        val gates = mapOf("counter" to counter)
 
-            val (signalStates, gateStates) = runSystem(iterations = 25, signals, gates)
-            printWaveforms(signalStates, gateStates)
-            expect(
-                """
+        val (signalStates, gateStates) = runSystem(iterations = 25, signals, gates)
+        printWaveforms(signalStates, gateStates)
+        expect(
+            """
              __________
             |          |   ┌──┐  ┌──┐  ┌──┐  ┌──┐  ┌──┐  ┌──┐  ┌──┐  ┌──┐  ┌──┐  ┌──┐  ┌──┐  ┌──┐
             |clock     |   │  │  │  │  │  │  │  │  │  │  │  │  │  │  │  │  │  │  │  │  │  │  │  │
@@ -37,9 +36,9 @@ class WaveformsTest {
             |__________|
             
         """
-                    .trimIndent()
-            )
-        }
+                .trimIndent()
+        )
+    }
 
     private fun runSystem(
         iterations: Int,

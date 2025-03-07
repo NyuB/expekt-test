@@ -4,8 +4,6 @@ import nyub.expekt.ExpectTests
 import org.junit.jupiter.api.Test
 
 class HistogramTest {
-    private fun expectTest(block: (ExpectTests.ExpectTest).() -> Unit) = ExpectTests(promote = true).expectTest(block)
-
     @Test
     fun `histogram demo`() = expectTest {
         val values = listOf(7, 3, 9, 4, 5, 7, 3, 8, 4, 2)

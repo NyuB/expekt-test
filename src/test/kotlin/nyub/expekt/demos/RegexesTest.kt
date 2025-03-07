@@ -1,12 +1,9 @@
 package nyub.expekt.demos
 
-import nyub.expekt.ExpectTests
 import nyub.expekt.demos.RegexesTest.Match.Companion.findAll
 import org.junit.jupiter.api.Test
 
 class RegexesTest {
-    private fun expectTest(block: (ExpectTests.ExpectTest).() -> Unit) = ExpectTests().expectTest(block)
-
     @Test
     fun `multiple matches`() = expectTest {
         val snakeIdRegex = Regex("([a-zA-Z][_a-zA-Z0-9]+)_([_a-zA-Z0-9]+)")

@@ -1,20 +1,17 @@
 package nyub.expekt.demos
 
-import nyub.expekt.ExpectTests
 import org.junit.jupiter.api.Test
 
 class ShellTest {
-
     @Test
-    fun `shell demo`() =
-        ExpectTests(promote = true).expectTest {
-            val shell = Shell(::camelCase, ::print)
-            shell("AlreadyCamelCase")
-            shell("snake_case")
-            shell("pascal-case")
-            shell("just capitalize this")
-            expect(
-                """
+    fun `shell demo`() = expectTest {
+        val shell = Shell(::camelCase, ::print)
+        shell("AlreadyCamelCase")
+        shell("snake_case")
+        shell("pascal-case")
+        shell("just capitalize this")
+        expect(
+            """
         $ AlreadyCamelCase
         AlreadyCamelCase
         $ snake_case
@@ -24,9 +21,9 @@ class ShellTest {
         $ just capitalize this
         Just Capitalize This
         """
-                    .trimIndent()
-            )
-        }
+                .trimIndent()
+        )
+    }
 
     class Shell(private val handler: (String) -> String, private val printer: (String) -> Unit) {
         operator fun invoke(input: String) {
