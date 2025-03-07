@@ -7,7 +7,7 @@ internal class KotlinUsageTest {
     /** Shared configuration for expect tests */
     private val expectTests = ExpectTests(promote = System.getProperty("nyub.expekt.promote", "false") == "true")
 
-    /** Alias to avoid typing e.expectTest for the generic case */
+    /** Alias to avoid typing expectTests.expectTest for the generic case */
     private fun expectTest(test: ExpectTests.ExpectTest.() -> Unit) = expectTests.expectTest(test)
 
     @Test
