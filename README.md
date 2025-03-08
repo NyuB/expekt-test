@@ -9,13 +9,14 @@ Inline snapshot testing for Kotlin and Java, inspired by JaneStreet's [expect-te
 ![waveforms demo](doc/waveforms.gif)
 
 - [Principles](#principles)
-- [External resources on snapshot testing](#external-resources-on-snapshot-testing)
+- [Alternatives and external resources on snapshot testing](#alternatives-and-external-resources-on-snapshot-testing)
 - [Setup](#setup)
   + [Maven](#from-maven)
   + [From Source](#from-source)
 - [Usage](#usage)
   + [Kotlin](#kotlin)
   + [Java](#java)
+  + [Examples](#examples)
   + [Constraints on expected string blocks](#constraints-on-expected-string-blocks)
 
 ## Principles
@@ -51,9 +52,9 @@ Here is a quick comparison table if you want to choose between Expekt and anothe
 | Expekt      | :white_check_mark: | :white_check_mark: | :x:                | user-configurable flag, per test class, test method, or `promote@` label on a snapshot | :x:                         | :x:                    | 
 | Selfie      | :white_check_mark: | :white_check_mark: | :white_check_mark: | global flag, `toBe_TODO()` or `//selfieonce` comment                                   | :x:                         | :x:                    |
 | expect-test |        :x:         | :white_check_mark: | :x:                | promotion command to update differing snapshots                                        | :x:                         | :x:                    |
-| Jest        |        :x:         | :white_check_mark: | :white_check_mark: | promotion command to update differing snapshots                                        | :v:                         | :x:                    |
-| Insta       |        :x:         | :white_check_mark: | :white_check_mark: | global flag                                                                            | :v:                         | :x:                    |
-| Verify      |        :x:         |                :x: | :white_check_mark: | interactive                                                                            | :v:                         | :white_check_mark:     |
+| Jest        |        :x:         | :white_check_mark: | :white_check_mark: | promotion command to update differing snapshots                                        | :white_check_mark:          | :x:                    |
+| Insta       |        :x:         | :white_check_mark: | :white_check_mark: | global flag                                                                            | :white_check_mark:          | :x:                    |
+| Verify      |        :x:         |                :x: | :white_check_mark: | global flag                                                                            | :white_check_mark:          | :white_check_mark:     |
 
 ## Setup
 
