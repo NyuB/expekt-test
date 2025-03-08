@@ -41,7 +41,7 @@ class HistogramTest {
     }
 
     @Test
-    fun `horizontal histogram`() = expectTest {
+    fun `horizontal histogram (zoo)`() = expectTest {
         val values = listOf("Cats" to 7, "Chihuahua" to 4, "Aligator" to 13, "Donkey" to 5)
         printHorizontalHistogram(values)
         expect(
@@ -53,7 +53,10 @@ class HistogramTest {
         """
                 .trimIndent()
         )
+    }
 
+    @Test
+    fun `horizontal histogram (votes)`() = expectTest {
         data class VoteBallot(val name: String, val amount: Int)
         fun String.amount(n: Int) = VoteBallot(this, n)
         val ballots = listOf("BOB".amount(2), "bob".amount(6), "Alice".amount(4), "AlIcE".amount(5), "Stuart".amount(3))
