@@ -48,15 +48,15 @@ Some alternatives or equivalents in other ecosystems:
 
 Here is a quick comparison table if you want to choose between Expekt and another JVM tool, or come from another language and want an idea of the corresponding features in Expekt:
 
-| Tool          |        JVM         |    Inline snapshot | File snapshot      | Update control                                                                         | Interactive snapshot review | Extensible diff/review |
-|---------------|:------------------:|-------------------:|--------------------|----------------------------------------------------------------------------------------|-----------------------------|------------------------|
-| Expekt        | :white_check_mark: | :white_check_mark: | :x:                | user-configurable flag, per test class, test method, or `promote@` label on a snapshot | :x:                         | :x:                    | 
-| Selfie        | :white_check_mark: | :white_check_mark: | :white_check_mark: | global flag, `toBe_TODO()` or `//selfieonce` comment                                   | :x:                         | :x:                    |
-| ApprovalTests | :white_check_mark: |                :x: | :white_check_mark: | interactive, global flag                                                               | :white_check_mark:          | :white_check_mark:     |
-| expect-test   |        :x:         | :white_check_mark: | :x:                | promotion command to update differing snapshots                                        | :x:                         | :x:                    |
-| Jest          |        :x:         | :white_check_mark: | :white_check_mark: | interactive, promotion command to update differing snapshots                           | :white_check_mark:          | :x:                    |
-| Insta         |        :x:         | :white_check_mark: | :white_check_mark: | interactive, global flag                                                               | :white_check_mark:          | :x:                    |
-| Verify        |        :x:         |                :x: | :white_check_mark: | interactive, global flag                                                               | :white_check_mark:          | :white_check_mark:     |
+| Tool          | JVM | Inline snapshot | File snapshot | Update control                                                                         | Interactive snapshot review | Extensible diff/review |
+|---------------|:---:|----------------:|---------------|----------------------------------------------------------------------------------------|-----------------------------|------------------------|
+| Expekt        |  ✅  |               ✅ | ❌             | user-configurable flag, per test class, test method, or `promote@` label on a snapshot | ❌                           | ❌                      | 
+| Selfie        |  ✅  |               ✅ | ✅             | global flag, `toBe_TODO()` or `//selfieonce` comment                                   | ❌                           | ❌                      |
+| ApprovalTests |  ✅  |               ❌ | ✅             | interactive, global flag                                                               | ✅                           | ✅                      |
+| expect-test   |  ❌  |               ✅ | ❌             | promotion command to update differing snapshots                                        | ❌                           | ❌                      |
+| Jest          |  ❌  |               ✅ | ✅             | interactive, promotion command to update differing snapshots                           | ✅                           | ❌                      |
+| Insta         |  ❌  |               ✅ | ✅             | interactive, global flag                                                               | ✅                           | ❌                      |
+| Verify        |  ❌  |               ❌ | ✅             | interactive, global flag                                                               | ✅                           | ✅                      |
 
 ## Setup
 
