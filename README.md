@@ -40,6 +40,7 @@ A few resources on this topic:
 
 Some alternatives or equivalents in other ecosystems:
 - [Selfie (Java/Python/JavaScript)](https://selfie.dev/jvm)
+- [ApprovalTests (Java and many others)](https://github.com/approvals/approvaltests.java)
 - [expect-test (OCaml)](https://github.com/janestreet/ppx_expect)
 - [Jest (JavaScript)](https://jestjs.io/fr/docs/snapshot-testing)
 - [Insta (Rust)](https://insta.rs/)
@@ -47,14 +48,15 @@ Some alternatives or equivalents in other ecosystems:
 
 Here is a quick comparison table if you want to choose between Expekt and another JVM tool, or come from another language and want an idea of the corresponding features in Expekt:
 
-| Tool        |        JVM         |    Inline snapshot | File snapshot      | Update control                                                                         | Interactive snapshot review | Extensible diff/review |
-|-------------|:------------------:|-------------------:|--------------------|----------------------------------------------------------------------------------------|-----------------------------|------------------------|
-| Expekt      | :white_check_mark: | :white_check_mark: | :x:                | user-configurable flag, per test class, test method, or `promote@` label on a snapshot | :x:                         | :x:                    | 
-| Selfie      | :white_check_mark: | :white_check_mark: | :white_check_mark: | global flag, `toBe_TODO()` or `//selfieonce` comment                                   | :x:                         | :x:                    |
-| expect-test |        :x:         | :white_check_mark: | :x:                | promotion command to update differing snapshots                                        | :x:                         | :x:                    |
-| Jest        |        :x:         | :white_check_mark: | :white_check_mark: | promotion command to update differing snapshots                                        | :white_check_mark:          | :x:                    |
-| Insta       |        :x:         | :white_check_mark: | :white_check_mark: | global flag                                                                            | :white_check_mark:          | :x:                    |
-| Verify      |        :x:         |                :x: | :white_check_mark: | global flag                                                                            | :white_check_mark:          | :white_check_mark:     |
+| Tool          |        JVM         |    Inline snapshot | File snapshot      | Update control                                                                         | Interactive snapshot review | Extensible diff/review |
+|---------------|:------------------:|-------------------:|--------------------|----------------------------------------------------------------------------------------|-----------------------------|------------------------|
+| Expekt        | :white_check_mark: | :white_check_mark: | :x:                | user-configurable flag, per test class, test method, or `promote@` label on a snapshot | :x:                         | :x:                    | 
+| Selfie        | :white_check_mark: | :white_check_mark: | :white_check_mark: | global flag, `toBe_TODO()` or `//selfieonce` comment                                   | :x:                         | :x:                    |
+| ApprovalTests | :white_check_mark: |                :x: | :white_check_mark: | interactive, global flag                                                               | :white_check_mark:          | :white_check_mark:     |
+| expect-test   |        :x:         | :white_check_mark: | :x:                | promotion command to update differing snapshots                                        | :x:                         | :x:                    |
+| Jest          |        :x:         | :white_check_mark: | :white_check_mark: | interactive, promotion command to update differing snapshots                           | :white_check_mark:          | :x:                    |
+| Insta         |        :x:         | :white_check_mark: | :white_check_mark: | interactive, global flag                                                               | :white_check_mark:          | :x:                    |
+| Verify        |        :x:         |                :x: | :white_check_mark: | interactive, global flag                                                               | :white_check_mark:          | :white_check_mark:     |
 
 ## Setup
 
