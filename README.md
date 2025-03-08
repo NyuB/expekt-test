@@ -92,8 +92,6 @@ Promotion is triggered:
 
 The JUnit 5 extension is also usable from the Kotlin side, even if it brings fewer improvements than for [Java users](#java).
 
-More examples are available in [the demo folder](src/test/kotlin/nyub/expekt/demos)
-
 ### Java
 
 The recommended usage for Java is to use the provided JUnit 5 extension. See [the java tests](src/test/kotlin/nyub/expekt/JavaUsageTest.java) for examples.
@@ -104,6 +102,10 @@ Promotion is triggered:
 - At method (test) level by using `@Promote(true/false)` annotation
 
 For non-junit codebases, the Kotlin scope functions are usable on the Java side, with slightly degraded ergonomics.
+
+### Examples
+
+More examples are available in [the demo folder](src/test/kotlin/nyub/expekt/demos)
 
 ### Constraints on expected string blocks
 
