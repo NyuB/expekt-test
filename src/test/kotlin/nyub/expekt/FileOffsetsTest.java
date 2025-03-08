@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(ExpectTestExtension.class)
 @ExpectTestExtension.RootPath("src/test/kotlin")
-public class FileOffsetsTest {
+class FileOffsetsTest {
   @Test
   @ExpectTestExtension.Promote(true)
   void multiPromotionLineProblem(ExpectTests.ExpectTest t) {
