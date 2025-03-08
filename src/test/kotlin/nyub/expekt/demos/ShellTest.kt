@@ -12,13 +12,13 @@ class ShellTest {
         shell("just capitalize this")
         expect(
             """
-        $ AlreadyCamelCase
+        $> AlreadyCamelCase
         AlreadyCamelCase
-        $ snake_case
+        $> snake_case
         SnakeCase
-        $ pascal-case
+        $> pascal-case
         PascalCase
-        $ just capitalize this
+        $> just capitalize this
         Just Capitalize This
         """
                 .trimIndent()
@@ -27,7 +27,7 @@ class ShellTest {
 
     class Shell(private val handler: (String) -> String, private val printer: (String) -> Unit) {
         operator fun invoke(input: String) {
-            printer("$ $input\n")
+            printer("$> $input\n")
             val output = handler(input)
             printer("$output\n")
         }
