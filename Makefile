@@ -4,6 +4,7 @@ default: fmt test
 test:
 	mvn test
 	$(PY) -m unittest etc/release_changelog.py
+	$(PY) -m unittest etc/validate_semver.py
 
 # Promote tests outputs, replacing expected string blocks with the actual tests' outputs
 test-promote:
