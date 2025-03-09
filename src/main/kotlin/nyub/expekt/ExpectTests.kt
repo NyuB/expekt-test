@@ -108,7 +108,7 @@ data class ExpectTests(
          *
          * @throws AssertionError if the current output does not match [expected]
          */
-        fun expect(expected: String) =
+        fun expect(expected: String): Unit =
             try {
                 val actual = output.toString()
                 creator.expect(
@@ -152,7 +152,7 @@ data class ExpectTests(
                 .joinToString(separator = "\n") { it.trimEnd() }
     }
 
-    private fun expect(expected: String, actual: String) =
+    private fun expect(expected: String, actual: String): Unit =
         synchronized(ExpectTests::class.java) {
             val callSite = expectCallSite()
             val callSiteFile = resolveCallSiteFile(callSite)
