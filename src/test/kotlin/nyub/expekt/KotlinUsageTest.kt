@@ -63,21 +63,20 @@ internal class KotlinUsageTest {
     }
 
     @Test
-    fun `raises when output is not equal to expected string`() =
+    fun `raises when output is not equal to expected string`() = throwsAssertionError {
         ExpectTests(promote = false).expectTest {
             println("Demain dès l'aube")
             println("Je mangerai un croissant")
-            assertThatThrownBy {
-                    expect(
-                        """
+
+            expect(
+                """
                 Demain, dès l'aube
                 A l'heure où blanchit la campagne
             """
-                            .trimIndent()
-                    )
-                }
-                .isInstanceOf(AssertionError::class.java)
+                    .trimIndent()
+            )
         }
+    }
 
     @Test
     fun `raises if not all output is consumed by assertions`() {
@@ -93,5 +92,29 @@ internal class KotlinUsageTest {
             """
                     .trimIndent()
             )
+    }
+
+    @Test
+    fun `all expect calls are checked (or promoted) before failing if any error`() {
+        assertThatThrownBy {
+                ExpectTests(promote = false).expectTest {
+                    "<CONTENT>".expect("<CONTENT>") // Expect call constraints error
+                    "<CONTENT>"
+                        .expect(
+                            // Mismatching content error
+                            """
+                <OOPS>
+            """
+                                .trimIndent()
+                        )
+                }
+            }
+            .isInstanceOf(AssertionError::class.java)
+            .hasMessageContaining("Could not find expected triple-quoted string block")
+            .hasMessageContaining("<OOPS>")
+    }
+
+    private fun <T> throwsAssertionError(test: () -> T): Unit {
+        assertThatThrownBy { test() }.isInstanceOf(AssertionError::class.java)
     }
 }

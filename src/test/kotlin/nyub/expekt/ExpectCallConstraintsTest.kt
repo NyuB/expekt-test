@@ -106,15 +106,15 @@ internal class ExpectCallConstraintsTest {
     }
 
     private fun constraintNotRespected(constraintErrorMessage: String, test: ExpectTests.ExpectTest.() -> Unit) =
-        ExpectTests(promote = true).expectTest {
-            assertThatThrownBy {
+        assertThatThrownBy {
+            ExpectTests(promote = true).expectTest {
                 test()
-            }.isExpectCallConstraintError().hasMessageContaining(constraintErrorMessage)
-        }
+            }
+        }.isExpectCallConstraintError().hasMessageContaining(constraintErrorMessage)
 
     private fun AbstractThrowableAssert<*, out Throwable>.isExpectCallConstraintError():
         AbstractThrowableAssert<*, out Throwable> =
-        this.isInstanceOf(RuntimeException::class.java)
+        this.isInstanceOf(AssertionError::class.java)
             .hasMessageContaining("Could not find expected triple-quoted string block")
             .hasMessageContaining("${this@ExpectCallConstraintsTest::class.simpleName}.kt")
 }

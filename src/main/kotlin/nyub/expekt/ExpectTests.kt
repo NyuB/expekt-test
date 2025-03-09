@@ -4,6 +4,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.SoftAssertions
 
 /**
  * In-source snapshot testing library
@@ -54,6 +55,8 @@ data class ExpectTests(
          * @see end
          */
         private val output = StringBuilder()
+
+        private val assertions = SoftAssertions()
 
         /** `true` when [output] is empty */
         val isEmpty: Boolean
@@ -114,6 +117,7 @@ data class ExpectTests(
                 creator.expect(
                     expected.trimTrailingWhitespacesAndNewlines(),
                     actual.trimTrailingWhitespacesAndNewlines(),
+                    assertions,
                 )
             } finally {
                 output.clear()
@@ -127,6 +131,7 @@ data class ExpectTests(
             creator.expect(
                 expected.trimTrailingWhitespacesAndNewlines(),
                 toString().trimTrailingWhitespacesAndNewlines(),
+                assertions,
             )
         }
 
@@ -137,7 +142,8 @@ data class ExpectTests(
          * @see expect
          */
         fun end() {
-            if (output.isNotEmpty()) throw AssertionError("Unhandled output remaining after expect test: '$output'")
+            if (output.isNotEmpty()) assertions.fail<Unit>("Unhandled output remaining after expect test: '$output'")
+            assertions.assertAll()
         }
 
         /** Clears the current output buffer */
@@ -152,7 +158,7 @@ data class ExpectTests(
                 .joinToString(separator = "\n") { it.trimEnd() }
     }
 
-    private fun expect(expected: String, actual: String): Unit =
+    private fun expect(expected: String, actual: String, assertions: SoftAssertions): Unit =
         synchronized(ExpectTests::class.java) {
             val callSite = expectCallSite()
             val callSiteFile = resolveCallSiteFile(callSite)
@@ -161,15 +167,15 @@ data class ExpectTests(
             val lineNumber = offsets.getAdjustedLine(callSiteFile, callSite.lineNumber)
             val expectedStringBlock =
                 findExpectedStringBlock(callSiteLines, lineNumber - 1).getOrElse { e ->
-                    throw RuntimeException(
+                    assertions.fail(
                         "Could not find expected triple-quoted string block at $callSiteFile:$lineNumber: ${e.message}"
-                    )
+                    ) ?: return
                 }
 
             if (expectedStringBlock.promoteLabeled || promote) {
                 promote(actual, expectedStringBlock, callSite)
             } else {
-                assertThat(actual).isEqualTo(expected)
+                assertions.assertThat(actual).isEqualTo(expected)
             }
         }
 

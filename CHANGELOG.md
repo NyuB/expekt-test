@@ -2,6 +2,21 @@
 
 ## Features
 - Allow to trigger promotion with a `promote@` label before expected string block (Kotlin only)
+- Check or promote all expect calls within a test before raising assertion errors, with soft assertions
+```kotlin
+expectTest {
+    "<CONTENT-1>".expect("""
+    <OOPS-1>
+    """) // Previously, test would have failed here
+
+    // In promotion mode, it would have failed here because of an invalid single-quoted string
+    "<CONTENT>".expect("<OOPS>")
+    
+    "<CONTENT-2>".expect("""
+    <OOPS-2>
+    """) // Now this will be checked or promoted too, then all errors are still raised
+}
+```
 
 ## Breaking Changes
 - Promoted lines indentation is now based on the closing triple quotes indentation. This is breaking for Kotlin blocks not combined with `String#trimIndent()`.

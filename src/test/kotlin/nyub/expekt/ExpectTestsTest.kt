@@ -36,18 +36,16 @@ Start
     }
 
     @Test
-    fun `keep leading white spaces`() =
+    fun `keep leading white spaces`() = throwsAssertionError {
         ExpectTests(promote = false).expectTest {
-            assertThatThrownBy {
-                    print("<CONTENT>")
-                    expect(
-                        """
+            print("<CONTENT>")
+            expect(
+                """
  <CONTENT>
 """
-                    )
-                }
-                .isInstanceOf(AssertionError::class.java)
+            )
         }
+    }
 
     @Test
     fun `handle cases where there is more newline in the expected string than actual lines in the string blocks`() =
@@ -122,5 +120,9 @@ Start
         }
 
         threadFailed?.let { fail(it) }
+    }
+
+    private fun <T> throwsAssertionError(test: () -> T): Unit {
+        assertThatThrownBy { test() }.isInstanceOf(AssertionError::class.java)
     }
 }
