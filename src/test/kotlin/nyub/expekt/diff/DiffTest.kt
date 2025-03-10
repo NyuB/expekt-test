@@ -18,3 +18,26 @@ abstract class DiffTest<Element, Patch> {
 
     private infix fun Element.`is equal to`(other: Element) = assertThat(this).isEqualTo(other)
 }
+
+fun <Element> SequenceDiff<Element>.printDiff(left: List<Element>, right: List<Element>, println: (String) -> Unit) {
+    val diff = diff(left, right)
+    var leftIndex = 0
+    var rightIndex = 0
+    diff.forEach {
+        when (it) {
+            is SequenceDiff.Delete -> {
+                println("- ${left[leftIndex]}")
+                leftIndex++
+            }
+            is SequenceDiff.Add<*> -> {
+                println("+ ${right[rightIndex]}")
+                rightIndex++
+            }
+            SequenceDiff.Keep -> {
+                println(left[leftIndex].toString())
+                leftIndex++
+                rightIndex++
+            }
+        }
+    }
+}

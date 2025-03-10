@@ -5,7 +5,7 @@ typealias Patch<Element> = List<SequenceDiff.PatchItem<Element>>
 interface SequenceDiff<Element> : Diff<List<Element>, Patch<Element>> {
     sealed interface PatchItem<out T>
 
-    class Add<T>(val element: T) : PatchItem<T>
+    data class Add<T>(val element: T) : PatchItem<T>
 
     data object Keep : PatchItem<Nothing>
 
