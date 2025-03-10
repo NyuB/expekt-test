@@ -5,3 +5,6 @@ target/
 
 # IntelliJ
 .idea/
+
+# JQwik
+.jqwik-database
