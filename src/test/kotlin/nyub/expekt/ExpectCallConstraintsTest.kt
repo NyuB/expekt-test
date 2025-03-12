@@ -1,5 +1,6 @@
 package nyub.expekt
 
+import nyub.expekt.PromotionTrigger.Companion.YES
 import org.assertj.core.api.AbstractThrowableAssert
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -87,7 +88,7 @@ internal class ExpectCallConstraintsTest {
         }
 
     @Test
-    fun `opening triple quotes not on the next line after expect call`() = ExpectTests(promote = true).expectTest {
+    fun `opening triple quotes not on the next line after expect call`() = ExpectTests(promote = YES).expectTest {
         print("<CONTENT>")
         expect( // Keep string block on the next line
             // Another line
@@ -107,7 +108,7 @@ internal class ExpectCallConstraintsTest {
 
     private fun constraintNotRespected(constraintErrorMessage: String, test: ExpectTests.ExpectTest.() -> Unit) =
         assertThatThrownBy {
-            ExpectTests(promote = true).expectTest {
+            ExpectTests(promote = YES).expectTest {
                 test()
             }
         }.isExpectCallConstraintError().hasMessageContaining(constraintErrorMessage)

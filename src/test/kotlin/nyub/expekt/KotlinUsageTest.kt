@@ -1,11 +1,13 @@
 package nyub.expekt
 
+import nyub.expekt.PromotionTrigger.BySystemProperty
+import nyub.expekt.PromotionTrigger.Companion.NO
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 
 internal class KotlinUsageTest {
     /** Shared configuration for expect tests */
-    private val expectTests = ExpectTests(promote = System.getProperty("nyub.expekt.promote", "false") == "true")
+    private val expectTests = ExpectTests(promote = BySystemProperty("nyub.expekt.promote"))
 
     /** Alias to avoid typing expectTests.expectTest for the generic case */
     private fun expectTest(test: ExpectTests.ExpectTest.() -> Unit) = expectTests.expectTest(test)
@@ -64,7 +66,7 @@ internal class KotlinUsageTest {
 
     @Test
     fun `raises when output is not equal to expected string`() = throwsAssertionError {
-        ExpectTests(promote = false).expectTest {
+        ExpectTests(promote = NO).expectTest {
             println("Demain dès l'aube")
             println("Je mangerai un croissant")
 
@@ -97,7 +99,7 @@ internal class KotlinUsageTest {
     @Test
     fun `all expect calls are checked (or promoted) before failing if any error`() {
         assertThatThrownBy {
-                ExpectTests(promote = false).expectTest {
+                ExpectTests(promote = NO).expectTest {
                     "<CONTENT>".expect("<CONTENT>") // Expect call constraints error
                     "<CONTENT>"
                         .expect(

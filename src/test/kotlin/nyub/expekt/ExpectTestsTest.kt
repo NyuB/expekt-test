@@ -1,12 +1,15 @@
 package nyub.expekt
 
+import nyub.expekt.PromotionTrigger.BySystemProperty
+import nyub.expekt.PromotionTrigger.Companion.NO
+import nyub.expekt.PromotionTrigger.Companion.YES
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 
 internal class ExpectTestsTest {
     private fun expectTest(test: ExpectTests.ExpectTest.() -> Unit) =
-        ExpectTests(promote = System.getProperty("nyub.expekt.promote", "false") == "true").expectTest(test)
+        ExpectTests(promote = BySystemProperty("nyub.expekt.promote")).expectTest(test)
 
     @Test
     fun `do not remove non leading or trailing blank lines`() = expectTest {
@@ -37,7 +40,7 @@ Start
 
     @Test
     fun `keep leading white spaces`() = throwsAssertionError {
-        ExpectTests(promote = false).expectTest {
+        ExpectTests(promote = NO).expectTest {
             print("<CONTENT>")
             expect(
                 """
@@ -49,7 +52,7 @@ Start
 
     @Test
     fun `handle cases where there is more newline in the expected string than actual lines in the string blocks`() =
-        ExpectTests(promote = true).expectTest {
+        ExpectTests(promote = YES).expectTest {
             print("Start")
             newLine()
             print("End")
@@ -71,7 +74,7 @@ Start
         val tas =
             List(25) {
                 Thread {
-                    ExpectTests(promote = true).expectTest {
+                    ExpectTests(promote = YES).expectTest {
                         repeat(5) { println("A") }
                         expect(
                             """
@@ -89,7 +92,7 @@ Start
         val tbs =
             List(25) {
                 Thread {
-                    ExpectTests(promote = true).expectTest {
+                    ExpectTests(promote = YES).expectTest {
                         repeat(5) { println("B") }
                         expect(
                             """
@@ -122,7 +125,7 @@ Start
         threadFailed?.let { fail(it) }
     }
 
-    private fun <T> throwsAssertionError(test: () -> T): Unit {
+    private fun <T> throwsAssertionError(test: () -> T) {
         assertThatThrownBy { test() }.isInstanceOf(AssertionError::class.java)
     }
 }

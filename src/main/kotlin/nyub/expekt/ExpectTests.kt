@@ -3,7 +3,6 @@ package nyub.expekt
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.SoftAssertions
 
 /**
@@ -19,8 +18,10 @@ import org.assertj.core.api.SoftAssertions
  */
 data class ExpectTests(
     private val resolveClassesFrom: Path = Paths.get("src/test/kotlin"),
-    private val promote: Boolean = false,
+    private val promote: PromotionTrigger = PromotionTrigger.NO,
 ) {
+    constructor(resolveClassesFrom: Path, promote: Boolean) : this(resolveClassesFrom, { _, _ -> promote })
+
     /**
      * All printed outputs within the provided scope are stored and can be asserted with [ExpectTest.expect] A call to
      * [ExpectTest.expect] clears the output. When leaving expectTest, an AssertionError is raised if there is any
@@ -172,7 +173,7 @@ data class ExpectTests(
                     ) ?: return
                 }
 
-            if (expectedStringBlock.promoteLabeled || promote) {
+            if (expectedStringBlock.promoteLabeled || promote(expected, actual)) {
                 promote(actual, expectedStringBlock, callSite)
             } else {
                 assertions.assertThat(actual).isEqualTo(expected)
@@ -414,5 +415,20 @@ private class ExpectedStringBlock(
         var space = 0
         while (space < s.length && s[space].isWhitespace()) space++
         return s.substring(0, space)
+    }
+}
+
+fun interface PromotionTrigger {
+    operator fun invoke(expected: String, actual: String): Boolean
+
+    companion object {
+        @JvmField val NO = PromotionTrigger { _, _ -> false }
+        @JvmField val YES = PromotionTrigger { _, _ -> true }
+    }
+
+    class BySystemProperty(private val property: String) : PromotionTrigger {
+        override operator fun invoke(expected: String, actual: String): Boolean {
+            return System.getProperty(property) == "true"
+        }
     }
 }

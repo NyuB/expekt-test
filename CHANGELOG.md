@@ -1,6 +1,7 @@
 # Current developments
 
 ## Features
+- Allow to inject a promotion hook to ExpectTests instead of a static boolean. This allows to, e.g. prompt the developer with a diff before promoting, or saving diff to files along test run.
 - Allow to trigger promotion with a `promote@` label before expected string block (Kotlin only)
 - Check or promote all expect calls within a test before raising assertion errors, with soft assertions
 ```kotlin

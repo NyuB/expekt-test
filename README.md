@@ -85,7 +85,8 @@ Feel free to download [ExpectTests.kt](src/main/kotlin/nyub/expekt/ExpectTests.k
 The recommended usage for Kotlin is to define an ExpectTests shared configuration and write your test with the `expectTest { }` scope function. See [the kotlin tests](src/test/kotlin/nyub/expekt/KotlinUsageTest.kt) for setup examples.
 
 Promotion is triggered:
-- By passing `true` to the [ExpectTests](src/main/kotlin/nyub/expekt/ExpectTests.kt) `promote` parameter
+- By returning `true` from the [ExpectTests](src/main/kotlin/nyub/expekt/ExpectTests.kt) `promote` parameter
+  + See [PromotionTrigger](src/main/kotlin/nyub/expekt/ExpectTests.kt)
 - By adding a `promote@` label before the [expected string block](#constraints-on-expected-string-blocks). This overrides the above-mentioned `promote` parameter
 ```kotlin
 "<CONTENT>".expect(promote@"""
