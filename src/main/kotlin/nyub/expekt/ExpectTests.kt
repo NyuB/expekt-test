@@ -281,7 +281,7 @@ private val <T> T.success: Result<T>
     get() = Result.success(this)
 
 /**
- * Globally records line additions or removal to keep line counts up-to-date if there are multiple promotions to the
+ * Globally records line additions or removals to keep line counts up-to-date if there are multiple promotions to the
  * same file
  */
 private val offsets = FileOffsets()
@@ -419,13 +419,26 @@ private class ExpectedStringBlock(
 }
 
 fun interface PromotionTrigger {
+    /** @return `true`if the [actual] content should be promoted and replace [expected] */
     operator fun invoke(expected: String, actual: String): Boolean
 
     companion object {
+        /**
+         * Never promote
+         *
+         * @see invoke
+         */
         @JvmField val NO = PromotionTrigger { _, _ -> false }
+
+        /**
+         * Always promote
+         *
+         * @see invoke
+         */
         @JvmField val YES = PromotionTrigger { _, _ -> true }
     }
 
+    /** Promote when [property] is equal to `"true"` */
     class BySystemProperty(private val property: String) : PromotionTrigger {
         override operator fun invoke(expected: String, actual: String): Boolean {
             return System.getProperty(property) == "true"
