@@ -1,4 +1,6 @@
-# Current developments
+# 1.1.0
+
+Customizable hooks for promotion
 
 ## Features
 - Allow to inject a promotion hook to ExpectTests instead of a static boolean. This allows to, e.g. prompt the developer with a diff before promoting, or saving diff to files along test run.

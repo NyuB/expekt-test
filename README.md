@@ -18,6 +18,7 @@ Inline snapshot testing for Kotlin and Java, inspired by JaneStreet's [expect-te
   + [Java](#java)
   + [Examples](#examples)
   + [Constraints on expected string blocks](#constraints-on-expected-string-blocks)
+- [Customizing promotion review](#customizing-promotion-review)
 
 ## Principles
 
@@ -50,7 +51,7 @@ Here is a quick comparison table if you want to choose between Expekt and anothe
 
 | Tool          | JVM | Inline snapshot | File snapshot | Update control                                                                         | Interactive snapshot review | Extensible diff/review |
 |---------------|:---:|----------------:|---------------|----------------------------------------------------------------------------------------|-----------------------------|------------------------|
-| Expekt        |  ✅  |               ✅ | ❌             | user-configurable flag, per test class, test method, or `promote@` label on a snapshot | ❌                           | ❌                      | 
+| Expekt        |  ✅  |               ✅ | ❌             | user-configurable flag, per test class, test method, or `promote@` label on a snapshot | ✅                           | ✅                      | 
 | Selfie        |  ✅  |               ✅ | ✅             | global flag, `toBe_TODO()` or `//selfieonce` comment                                   | ❌                           | ❌                      |
 | ApprovalTests |  ✅  |               ❌ | ✅             | interactive, global flag                                                               | ✅                           | ✅                      |
 | expect-test   |  ❌  |               ✅ | ❌             | promotion command to update differing snapshots                                        | ❌                           | ❌                      |
@@ -68,7 +69,7 @@ Add expekt dependency to your `pom.xml`:
 <dependency>
     <groupId>io.github.nyub</groupId>
     <artifactId>expekt-test</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -197,3 +198,12 @@ $content
 - (because the expected string block uses string interpolation)
 
 See [ExpectTestsTest.ExpectCallConstraintsTest](src/test/kotlin/nyub/expekt/ExpectCallConstraintsTest.kt) for more invalid examples
+
+## Customizing promotion review
+
+When comparing actual and expected contents, ExpectTests.promote() is called to choose between updating the expected content or perform equality assertion, where `promote` is an implementation of `PromotionTrigger`.
+Injecting an implementation of PromotionTrigger to ExpectTests configuration allows to define any custom review mechanism, for example interactive prompting or reports.
+
+The builtin [PromptWithDiffPanel](src/main/kotlin/nyub/expekt/diff/PromptWithDiffPanel.kt) pops up a git-like diff view asking user to accept or not each differing snapshot along the test suite.
+
+![Interactive review gif](doc/diff.gif)
