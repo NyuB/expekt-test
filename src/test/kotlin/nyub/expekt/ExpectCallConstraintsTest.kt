@@ -106,12 +106,13 @@ internal class ExpectCallConstraintsTest {
         """.trimIndent())
     }
 
-    private fun constraintNotRespected(constraintErrorMessage: String, test: ExpectTests.ExpectTest.() -> Unit) =
+    private fun constraintNotRespected(constraintErrorMessage: String, test: ExpectTests.ExpectTest.() -> Unit) {
         assertThatThrownBy {
             ExpectTests(promote = YES).expectTest {
                 test()
             }
         }.isExpectCallConstraintError().hasMessageContaining(constraintErrorMessage)
+    }
 
     private fun AbstractThrowableAssert<*, out Throwable>.isExpectCallConstraintError():
         AbstractThrowableAssert<*, out Throwable> =
