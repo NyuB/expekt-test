@@ -177,14 +177,18 @@ expect(f("""
 
 - (because the opening quotes are not the next token after the `expect(` call)
 
+<!-- snippet-start constraint-error-alias -->
+<a id='snippet-constraint-error-alias'></a>
 ```kotlin
-fun alias(s: String) = expect(s)
-alias(
-"""
-<CONTENT>
-"""
-)
+        fun alias(s: String) = expect(s)
+        alias(
+        """
+           <CONTENT>
+           """
+        )
 ```
+<sup><a href='/src\test\kotlin\nyub\expekt\ExpectCallConstraintsTest.kt#L39-L46' title='Snippet source file'>snippet source</a> | <a href='#snippet-constraint-error-alias' title='Start of snippet'>anchor</a></sup>
+<!-- snippet-end -->
 
 - (because expect is aliased, so the search starts from the actual call site on the first line)
 

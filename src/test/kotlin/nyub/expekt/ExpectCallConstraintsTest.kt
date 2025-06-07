@@ -36,12 +36,14 @@ internal class ExpectCallConstraintsTest {
 
     @Test
     fun `aliased expect`() = constraintNotRespected("could not find opening quotes") {
+        // snippet-start constraint-error-alias
         fun alias(s: String) = expect(s)
         alias(
         """
            <CONTENT>
            """
         )
+        // snippet-end
     }
 
     @Test
